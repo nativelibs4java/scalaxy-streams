@@ -7,10 +7,14 @@ import java.util.concurrent.Executors
 
 private[streams] class ThreadPoolScheduler extends RunnerScheduler
 {
-  private[this] val numThreads = Integer.parseInt(
-    System.getProperty(
+  private[this] val numThreads = {
+    val n = Integer.parseInt(System.getProperty(
       "junit.parallel.threads",
       (Runtime.getRuntime().availableProcessors * 2) + ""))
+    println("scalaxy.streams.ThreadPoolScheduler.numThreads = " + n)
+
+    n
+  }
   private[this] val executor = Executors.newFixedThreadPool(numThreads)
 
   override def finished() {
