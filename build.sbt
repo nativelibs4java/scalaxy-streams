@@ -41,6 +41,17 @@ scalacOptions in console in Compile ++= Seq(
 
 scalariformSettings
 
+ScalariformKeys.preferences := {
+  import scalariform.formatter.preferences._
+
+  FormattingPreferences()
+    .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
+    .setPreference(DoubleIndentClassDeclaration, true)
+    .setPreference(IndentSpaces, 2)
+    .setPreference(IndentWithTabs, false)
+    .setPreference(PreserveDanglingCloseParenthesis, true)
+}
+
 licenses := Seq("BSD-3-Clause" -> url("http://www.opensource.org/licenses/BSD-3-Clause"))
 
 homepage := Some(url("https://github.com/nativelibs4java/scalaxy-streams"))
