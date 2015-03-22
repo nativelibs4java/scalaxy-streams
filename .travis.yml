@@ -1,9 +1,7 @@
 sudo: false
-
 language: scala
 scala:
-   - 2.11.5
-
+- 2.11.5
 cache:
   directories:
   - $HOME/.m2
@@ -11,5 +9,13 @@ cache:
   - $HOME/.sbt
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION 'set javaOptions += "-Djunit.parallel.threads=1"' 'set parallelExecution in Test := false' test
+- sbt ++$TRAVIS_SCALA_VERSION 'set javaOptions += "-Djunit.parallel.threads=1"' 'set
+  parallelExecution in Test := false' test
+env:
+  global:
+  - JAVA_OPTS="-Xmx5G"
+  - secure: EiIU/od4+xs+UYNI+an212eR9P4aks1wp6fd3f1xRW5D/KCTDHcXRnpHsiiZM3+A9klVqTODdV1RDThUo8wcSro4IGjbTY3TniRjzYJnLOyuZFIGJWwN++lnepn/DwFk3Ckr661BcdIS0+5TybOD4ZzkcUOreU/0q/1qd4uqTRU=
+  - secure: DNSLyto/JVJTLMsBxrxK0C0B1/bdHZrDmKxr2ZTgEE6HFTZOLnAB39MD3RS6rnPotZcffdwraBTjYwH21Z8G0byquDyYR0khKdACsW77vy9ZBkNa6YUwlrUov9t2TfdU83QFvjoe8TCBmNqiQqkgB62YO7XS1wIe+pXeFbAqe/U=
 
+after_success:
+  - "[[ $TRAVIS_BRANCH == \"master\" ]] && { sbt ++$TRAVIS_SCALA_VERSION publish; };"

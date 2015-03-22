@@ -17,6 +17,8 @@ libraryDependencies ++= Seq(
   "com.novocode" % "junit-interface" % "0.11" % "test"
 )
 
+testOptions in Global += Tests.Argument(TestFrameworks.JUnit, "-v")
+
 fork in Test := true
 
 scalacOptions ++= Seq(
@@ -53,14 +55,7 @@ scalacOptions in console in Compile ++= Seq(
 //
 // scalariformSettings
 
-
-licenses := Seq("BSD-3-Clause" -> url("http://www.opensource.org/licenses/BSD-3-Clause"))
-
 homepage := Some(url("https://github.com/nativelibs4java/scalaxy-streams"))
-
-testOptions in Global += Tests.Argument(TestFrameworks.JUnit, "-v")
-
-pomIncludeRepository := { _ => false }
 
 pomExtra := (
   <scm>
@@ -76,6 +71,10 @@ pomExtra := (
   </developers>
 )
 
+licenses := Seq("BSD-3-Clause" -> url("http://www.opensource.org/licenses/BSD-3-Clause"))
+
+pomIncludeRepository := { _ => false }
+
 publishMavenStyle := true
 
 publishTo <<= version { (v: String) =>
@@ -86,3 +85,10 @@ publishTo <<= version { (v: String) =>
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
+credentials ++= (for {
+  username <- Option(System.getenv("SONATYPE_USERNAME"));
+  password <- Option(System.getenv("SONATYPE_PASSWORD"))
+} yield Credentials(
+  "Sonatype Nexus Repository Manager",
+  "oss.sonatype.org", username, password
+)).toSeq
