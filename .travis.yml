@@ -8,7 +8,8 @@ cache:
   directories:
   - $HOME/.m2
   - $HOME/.ivy2
+  - $HOME/.sbt
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION 'set javaOptions += "-Djunit.parallel.threads=1"' 'set parallelExecution in Test := false' 'set fork in Test := false' test
+  - sbt ++$TRAVIS_SCALA_VERSION 'set javaOptions += "-Djunit.parallel.threads=1"' 'set parallelExecution in Test := false' test
 
