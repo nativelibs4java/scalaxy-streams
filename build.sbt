@@ -43,16 +43,16 @@ scalacOptions in console in Compile ++= Seq(
 
 // ScalariformKeys.preferences := {
 //   import scalariform.formatter.preferences._
-//
 //   FormattingPreferences()
-//     .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
-//     .setPreference(DoubleIndentClassDeclaration, true)
+//     .setPreference(AlignParameters, true)
 //     .setPreference(AlignSingleLineCaseStatements, true)
+//     .setPreference(CompactControlReadability, true)
+//     .setPreference(DoubleIndentClassDeclaration, true)
 //     .setPreference(IndentSpaces, 2)
 //     .setPreference(IndentWithTabs, false)
+//     .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
 //     .setPreference(PreserveDanglingCloseParenthesis, true)
 // }
-//
 // scalariformSettings
 
 homepage := Some(url("https://github.com/nativelibs4java/scalaxy-streams"))

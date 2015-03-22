@@ -8,10 +8,6 @@ cache:
   - $HOME/.ivy2
   - $HOME/.sbt
 
-before_script:
- - "echo $JAVA_OPTS"
- - "export JAVA_OPTS=-Xmx5G"
-
 script:
 - sbt ++$TRAVIS_SCALA_VERSION 'set javaOptions += "-Djunit.parallel.threads=1"' 'set
   parallelExecution in Test := false' test
