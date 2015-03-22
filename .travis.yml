@@ -1,0 +1,14 @@
+sudo: false
+
+language: scala
+scala:
+   - 2.11.5
+
+cache:
+  directories:
+  - $HOME/.m2
+  - $HOME/.ivy2
+
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION 'set javaOptions += "-Djunit.parallel.threads=1"' 'set parallelExecution in Test := false' test
+
