@@ -18,6 +18,7 @@ Scalaxy/Streams makes your Scala 2.11.x collections code faster (official heir t
 * Avoids many unnecessary tuples (for instance, those introduced by `zipWithIndex`).
 * "Safe by default" (optimizations preserve Scala semantics, with side-effect analysis).
 * Available as a compiler plugin (whole project) or as a macro (surgical strikes). No runtime deps.
+* [BSD-licensed](./LICENSE)
 
 ```scala
 // For instance, given the following array:
@@ -363,7 +364,7 @@ If you want to build / test / hack on this project:
 
         git clone git://github.com/ochafik/Scalaxy.git
         cd Scalaxy
-        sbt "project scalaxy-streams" "; clean ; ~test"
+        sbt "project scalaxy-streams" "; clean ; test-only *PerformanceTest"
 
 * Want to see what's going on when you compile a project with Scalaxy/Streams?
 
