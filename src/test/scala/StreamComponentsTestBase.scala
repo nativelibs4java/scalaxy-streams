@@ -33,9 +33,8 @@ trait StreamComponentsTestBase extends Utils with ConsoleReporters
       override def initialValue() = a
     }
 
-  private[this] val infosBuilder = threadLocal(ListBuffer[String]())
-  private[this] val warningsBuilder = threadLocal(ListBuffer[String]())
-  private[this] val errorsBuilder = threadLocal(ListBuffer[String]())
+  private[this] val infosBuilder, warningsBuilder, errorsBuilder =
+    threadLocal(ListBuffer[String]())
 
   private[this] val frontEnd = new FrontEnd {
     override def display(info: Info) {
