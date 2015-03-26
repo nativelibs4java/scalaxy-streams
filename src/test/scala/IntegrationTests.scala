@@ -12,7 +12,7 @@ case class IntegrationTest(name: String, source: String, expectedMessages: Compi
 
 object IntegrationTests
 {
-  def streamMsg(streamDescriptions: String*)
+  def msgs(streamDescriptions: String*)
                (implicit strategy: scalaxy.streams.OptimizationStrategy) =
     CompilerMessages(
       infos = streamDescriptions.map(Optimizations.optimizedStreamMessage(_, strategy)).toList)
@@ -28,7 +28,7 @@ object IntegrationTests
     //   -> CompilerMessages(),
 
     // "(1 to 10).collect({ case x if x < 5 => x + 1 })"
-    //   -> streamMsg("Range.collect -> IndexedSeq")
+    //   -> msgs("Range.collect -> IndexedSeq")
 
     // TODO investigate performance:
     // col.filter(v => (v % 2) == 0).map(_ * 2).toArray.toSeq
@@ -36,19 +36,19 @@ object IntegrationTests
     // (0 until n).filter(v => (v % 2) == 0).map(_ * 2).toArray.toSeq
 
     "for ((a, b) <- Array(null, (1, 2))) yield (a + b)"
-      -> streamMsg("Array.withFilter.map -> Array"),
+      -> msgs("Array.withFilter.map -> Array"),
 
     "for ((a, b) <- Some[(Int, Int)](null)) yield (a + b)"
-      -> streamMsg("Some.withFilter.map -> Option"),
+      -> msgs("Some.withFilter.map -> Option"),
 
     """
       val list = List(null, (1, 2))
       for ((a, b) <- list) yield (a + b)
     """
-      -> streamMsg("List.withFilter.map -> List"),
+      -> msgs("List.withFilter.map -> List"),
 
     "(0 to 10).filter(v => (v % 2) == 0).map(_ * 2).toArray.toSeq"
-      -> streamMsg("Range.filter.map.toArray -> ArrayOps"),
+      -> msgs("Range.filter.map.toArray -> ArrayOps"),
 
     """
       class Foo {
@@ -57,7 +57,7 @@ object IntegrationTests
       }
       new Foo().res
     """
-      -> streamMsg("Range.map -> IndexedSeq"),
+      -> msgs("Range.map -> IndexedSeq"),
 
     // Reduced from scala.tools.nsc.CompileSocket:
     """
@@ -72,14 +72,14 @@ object IntegrationTests
           List(name, port)
       ) getOrElse (throw new RuntimeException("Malformed"))
     """
-      -> streamMsg("Option.withFilter.flatMap(Option.map).getOrElse"),
+      -> msgs("Option.withFilter.flatMap(Option.map).getOrElse"),
 
     """
       case class Interval(b: Int, c: Int)
       val col = List((1, Interval(2, 3)), (10, Interval(20, 30)))
       for ((a, Interval(b, c)) <- col) yield a + b + c
     """
-      -> streamMsg("List.withFilter.map -> List"),
+      -> msgs("List.withFilter.map -> List"),
 
     """
       class Foo {
@@ -87,265 +87,265 @@ object IntegrationTests
       }
       new Foo().res
     """
-      -> streamMsg("Range.map.map -> IndexedSeq"),
+      -> msgs("Range.map.map -> IndexedSeq"),
 
     "def foo = (1 to 10).map(i => () => i * 3).map(_()); foo"
-       -> streamMsg("Range.map.map -> IndexedSeq"),
+       -> msgs("Range.map.map -> IndexedSeq"),
 
     """
       case class Foo(i: Int)
       val arr = new Array[Foo](5);
       for (Foo(i) <- arr) yield i
     """
-      -> streamMsg("Array.withFilter.map -> Array"),
+      -> msgs("Array.withFilter.map -> Array"),
 
     /// Range.takeWhile and .dropWhile return a Range, which doesn't fit nicely with WhileOps.
     "(1 to 10).takeWhile(_ < 5)" -> CompilerMessages(),
     "(1 to 10).dropWhile(_ < 5)" -> CompilerMessages(),
 
     "(1 to 10).takeWhile(_ < 5).map(_ * 2)"
-      -> streamMsg("Range.takeWhile.map -> IndexedSeq"),
+      -> msgs("Range.takeWhile.map -> IndexedSeq"),
 
     "(1 to 10).dropWhile(_ < 5).map(_ * 2)"
-      -> streamMsg("Range.dropWhile.map -> IndexedSeq"),
+      -> msgs("Range.dropWhile.map -> IndexedSeq"),
 
     "(1 to 10).map(_ * 2).toSet.toList"
-      -> streamMsg("Range.map -> Set"),
+      -> msgs("Range.map -> Set"),
 
     "(1 to 10).map(_ * 2).toVector.toList"
-      -> streamMsg("Range.map.toVector -> List"),
+      -> msgs("Range.map.toVector -> List"),
 
     "List(1, 2, 2, 3).toVector.map((_: Int) * 2).toList"
-      -> streamMsg("List.toVector.map -> List"),
+      -> msgs("List.toVector.map -> List"),
 
     "Array((1, 2), (3, 4), (5, 6)) find (_._1 > 1) map (_._2)"
-      -> streamMsg("Array.find.map -> Option"),
+      -> msgs("Array.find.map -> Option"),
 
     "(1 to 10).count(_ < 5)"
-      -> streamMsg("Range.count"),
+      -> msgs("Range.count"),
 
     "(1L to 2L).map(_ + 1)"
-      -> streamMsg("Range.map -> IndexedSeq"),
+      -> msgs("Range.map -> IndexedSeq"),
 
     "(0 to 2).map(i => (1, i))"
-      -> streamMsg("Range.map -> IndexedSeq"),
+      -> msgs("Range.map -> IndexedSeq"),
 
     "(0 to 2).map(i => (i, i))"
-      -> streamMsg("Range.map -> IndexedSeq"),
+      -> msgs("Range.map -> IndexedSeq"),
 
     "(0 to 2).map(i => (i, 1))"
-      -> streamMsg("Range.map -> IndexedSeq"),
+      -> msgs("Range.map -> IndexedSeq"),
 
     "List(1, 2, 3).flatMap(v => List(v * 2, v * 2 + 1)).count(_ % 2 == 0)"
-      -> streamMsg("List.flatMap(List).count"),
+      -> msgs("List.flatMap(List).count"),
 
     "List(1, 2, 3).flatMap(v => List(v * 2, v * 2 + 1).map(_ + 1)).count(_ % 2 == 0)"
-      -> streamMsg("List.flatMap(List.map).count"),
+      -> msgs("List.flatMap(List.map).count"),
 
     "Array(1, 2, 3, 4).flatMap(v => Array(v, v * 2).find(_ > 2))"
-      -> streamMsg("Array.flatMap(Array.find) -> Array"),
+      -> msgs("Array.flatMap(Array.find) -> Array"),
 
-    "(0 to 10 by 2).exists(_ % 2 == 0)" -> streamMsg("Range.exists"),
-    "(0 to 10 by 2).forall(_ % 2 == 0)" -> streamMsg("Range.forall"),
-    "(1 to 10 by 2).exists(_ % 2 == 0)" -> streamMsg("Range.exists"),
-    "(1 to 10 by 2).forall(_ % 2 == 0)" -> streamMsg("Range.forall"),
+    "(0 to 10 by 2).exists(_ % 2 == 0)" -> msgs("Range.exists"),
+    "(0 to 10 by 2).forall(_ % 2 == 0)" -> msgs("Range.forall"),
+    "(1 to 10 by 2).exists(_ % 2 == 0)" -> msgs("Range.exists"),
+    "(1 to 10 by 2).forall(_ % 2 == 0)" -> msgs("Range.forall"),
 
     "Array(1, 2, 3, 4).flatMap(v => List(v, v * 2).map(_ + 1)).find(_ > 2)"
-      -> streamMsg("Array.flatMap(List.map).find -> Option"),
+      -> msgs("Array.flatMap(List.map).find -> Option"),
 
     "Option(10).map(_ * 2).getOrElse(10)"
-      -> streamMsg("Option.map.getOrElse"),
+      -> msgs("Option.map.getOrElse"),
 
     "(None: Option[Int]).getOrElse(10)"
-      -> streamMsg("Option.getOrElse"),
+      -> msgs("Option.getOrElse"),
 
     "Option[Any](null).getOrElse(10)"
-      -> streamMsg("Option.getOrElse"),
+      -> msgs("Option.getOrElse"),
 
     "Option[AnyRef](null).getOrElse(10)"
-      -> streamMsg("Option.getOrElse"),
+      -> msgs("Option.getOrElse"),
 
     "Option(10).filter(_ < 5).isEmpty"
-      -> streamMsg("Option.filter.isEmpty"),
+      -> msgs("Option.filter.isEmpty"),
 
     "Some(10).map(_ * 2).get"
-      -> streamMsg("Some.map.get"),
+      -> msgs("Some.map.get"),
 
     "(None: Option[Any]).getOrElse(2)"
-      -> streamMsg("Option.getOrElse"),
+      -> msgs("Option.getOrElse"),
     "Option[Any](null).getOrElse(2)"
-      -> streamMsg("Option.getOrElse"),
+      -> msgs("Option.getOrElse"),
     "Some(1).getOrElse(2)"
-      -> streamMsg("Some.getOrElse"),
+      -> msgs("Some.getOrElse"),
     "(None: Option[Any]).orNull"
-      -> streamMsg("Option.orNull"),
+      -> msgs("Option.orNull"),
     "Option[Any](null).orNull"
-      -> streamMsg("Option.orNull"),
+      -> msgs("Option.orNull"),
     "Some[Any](1).orNull"
-      -> streamMsg("Some.orNull"),
+      -> msgs("Some.orNull"),
 
     "(None: Option[Int]).isEmpty"
-      -> streamMsg("Option.isEmpty"),
+      -> msgs("Option.isEmpty"),
     "Option[Any](null).isEmpty"
-      -> streamMsg("Option.isEmpty"),
+      -> msgs("Option.isEmpty"),
     "Some(1).isEmpty"
-      -> streamMsg("Some.isEmpty"),
+      -> msgs("Some.isEmpty"),
     "(None: Option[Int]).isDefined"
-      -> streamMsg("Option.isDefined"),
+      -> msgs("Option.isDefined"),
     "Option[Any](null).isDefined"
-      -> streamMsg("Option.isDefined"),
+      -> msgs("Option.isDefined"),
     "Some(1).isDefined"
-      -> streamMsg("Some.isDefined"),
+      -> msgs("Some.isDefined"),
     "(None: Option[Int]).nonEmpty"
-      -> streamMsg("Option.nonEmpty"),
+      -> msgs("Option.nonEmpty"),
     "Option[Any](null).nonEmpty"
-      -> streamMsg("Option.nonEmpty"),
+      -> msgs("Option.nonEmpty"),
     "Some(1).nonEmpt"
-      -> streamMsg("Some.nonEmpty"),
+      -> msgs("Some.nonEmpty"),
 
     "(Array[Int]()).isEmpty"
-      -> streamMsg("Array.isEmpty"),
+      -> msgs("Array.isEmpty"),
     "List[Int]().isEmpty"
-      -> streamMsg("List.isEmpty"),
+      -> msgs("List.isEmpty"),
     "(0 until 0).isEmpty"
-      -> streamMsg("Range.isEmpty"),
+      -> msgs("Range.isEmpty"),
     "(Array[Int]()).nonEmpty"
-      -> streamMsg("Array.nonEmpty"),
+      -> msgs("Array.nonEmpty"),
     "List[Int]().nonEmpty"
-      -> streamMsg("List.nonEmpty"),
+      -> msgs("List.nonEmpty"),
     "(0 until 0).nonEmpty"
-      -> streamMsg("Range.nonEmpty"),
+      -> msgs("Range.nonEmpty"),
 
     "for (o <- Some(Some(10)); v <- o) yield v"
-      -> streamMsg("Some.flatMap(Option.map) -> Option"),
+      -> msgs("Some.flatMap(Option.map) -> Option"),
 
     "Some(Some((1, 2))).flatMap(o => o.map(p => (p._1, p._2)))"
-      -> streamMsg("Some.flatMap(Option.map) -> Option"),
+      -> msgs("Some.flatMap(Option.map) -> Option"),
 
     "for (o <- Some(Some((1, 2))); (a, b) <- o) yield a + b"
-      -> streamMsg("Some.flatMap(Option.withFilter.map) -> Option"),
+      -> msgs("Some.flatMap(Option.withFilter.map) -> Option"),
 
     "List(1, 2, 3).map(_ * 2)"
-      -> streamMsg("List.map -> List"),
+      -> msgs("List.map -> List"),
 
     "Array(1, 2, 3).flatMap { case 1 => Some(10) case v => Some(v * 100) }"
-      -> streamMsg("Array.flatMap -> Array"),
+      -> msgs("Array.flatMap -> Array"),
 
     "val n = 3; (1 to n) map (_ * 2)"
-      -> streamMsg("Range.map -> IndexedSeq"),
+      -> msgs("Range.map -> IndexedSeq"),
 
     "val n = 3; (1 to n).toList map (_ * 2)"
-      -> streamMsg("Range.toList.map -> List"),
+      -> msgs("Range.toList.map -> List"),
 
     "val n = 3; (1 to n).toArray map (_ * 2)"
-      -> streamMsg("Range.toArray.map -> Array"),
+      -> msgs("Range.toArray.map -> Array"),
 
     "Option(1).map(_ * 2).filter(_ < 3)"
-      -> streamMsg("Option.map.filter -> Option"),
+      -> msgs("Option.map.filter -> Option"),
 
     """Option("a").flatMap(v => Option(v).filter(_ != null))"""
-      -> streamMsg("Option.flatMap(Option.filter) -> Option"),
+      -> msgs("Option.flatMap(Option.filter) -> Option"),
 
     "(None: Option[String]).map(_ * 2)"
-      -> streamMsg("Option.map -> Option"),
+      -> msgs("Option.map -> Option"),
 
     "Some(1).map(_ * 2).filter(_ < 3)"
-      -> streamMsg("Some.map.filter -> Option"),
+      -> msgs("Some.map.filter -> Option"),
 
     "Seq(0, 1, 2, 3).map(_ * 2).filter(_ < 3)"
-      -> streamMsg("Seq.map.filter -> Seq"),
+      -> msgs("Seq.map.filter -> Seq"),
 
     "List(0, 1, 2, 3).map(_ * 2).filter(_ < 3)"
-      -> streamMsg("List.map.filter -> List"),
+      -> msgs("List.map.filter -> List"),
 
     "Array(1, 2, 3).map(_ * 2).filter(_ < 3)"
-      -> streamMsg("Array.map.filter -> Array"),
+      -> msgs("Array.map.filter -> Array"),
 
     "Array(1, 2, 3).map(_ * 2).filter(_ < 3).toSet"
-      -> streamMsg("Array.map.filter -> Set"),
+      -> msgs("Array.map.filter -> Set"),
 
     "Array(1, 2, 3).map(_ * 2).filter(_ < 3).toList"
-      -> streamMsg("Array.map.filter -> List"),
+      -> msgs("Array.map.filter -> List"),
 
     "Array(1, 2, 3).map(_ * 2).filter(_ < 3).toVector"
-      -> streamMsg("Array.map.filter -> Vector"),
+      -> msgs("Array.map.filter -> Vector"),
 
     "{ val list = List(1, 2, 3); list.map(_ * 2).filter(_ < 3) }"
-      -> streamMsg("List.map.filter -> List"),
+      -> msgs("List.map.filter -> List"),
 
     "(Nil: scala.collection.immutable.List[Int]).map(_ * 2).filter(_ < 3).toArray"
-      -> streamMsg("List.map.filter -> Array"),
+      -> msgs("List.map.filter -> Array"),
 
     "(1 :: 2 :: 3 :: Nil).map(_ * 2).filter(_ < 3).toArray"
-      -> streamMsg("List.map.filter -> Array"),
+      -> msgs("List.map.filter -> Array"),
 
     "(1 to 3).map(_ * 2).filter(_ < 3).toArray"
-      -> streamMsg("Range.map.filter -> Array"),
+      -> msgs("Range.map.filter -> Array"),
 
     "(1 to 3).map(_ + 1).sum"
-      -> streamMsg("Range.map.sum"),
+      -> msgs("Range.map.sum"),
 
     "Array(1, 2, 3).map(_ * 10).sum"
-      -> streamMsg("Array.map.sum"),
+      -> msgs("Array.map.sum"),
 
     "Array(1, 2, 3).map(_ * 10).product"
-      -> streamMsg("Array.map.product"),
+      -> msgs("Array.map.product"),
 
     "val n = 10; for (v <- 0 to n) yield v"
-      -> streamMsg("Range.map -> IndexedSeq"),
+      -> msgs("Range.map -> IndexedSeq"),
 
     "Array(1, 2, 3).map(_ * 2).filterNot(_ < 3)"
-      -> streamMsg("Array.map.filterNot -> Array"),
+      -> msgs("Array.map.filterNot -> Array"),
 
     "(2 to 10).map(_ * 2).filter(_ < 3)"
-      -> streamMsg("Range.map.filter -> IndexedSeq"),
+      -> msgs("Range.map.filter -> IndexedSeq"),
 
     "(2 until 10 by 2).map(_ * 2)"
-      -> streamMsg("Range.map -> IndexedSeq"),
+      -> msgs("Range.map -> IndexedSeq"),
 
     "(20 to 7 by -3).map(_ * 2).filter(_ < 3)"
-      -> streamMsg("Range.map.filter -> IndexedSeq"),
+      -> msgs("Range.map.filter -> IndexedSeq"),
 
     """List(1, 2, 3).mkString("pre", ";", "post")"""
-      -> streamMsg("List.mkString"),
+      -> msgs("List.mkString"),
 
     """List(1, 2, 3).mkString(" ")"""
-      -> streamMsg("List.mkString"),
+      -> msgs("List.mkString"),
 
     """List(1, 2, 3).mkString"""
-      -> streamMsg("List.mkString"),
+      -> msgs("List.mkString"),
 
     "Array(1, 2, 3).map(_ * 2).map(_ < 3)"
-      -> streamMsg("Array.map.map -> Array"),
+      -> msgs("Array.map.map -> Array"),
 
     "(10 to 20).map(i => () => i).map(_())"
-      -> streamMsg("Range.map.map -> IndexedSeq"),
+      -> msgs("Range.map.map -> IndexedSeq"),
 
     "(10 to 20).map(_ + 1).map(i => () => i).map(_())"
-      -> streamMsg("Range.map.map.map -> IndexedSeq"),
+      -> msgs("Range.map.map.map -> IndexedSeq"),
 
     "(10 to 20).map(_ * 10).map(i => () => i).reverse.map(_())"
-      -> streamMsg("Range.map.map -> IndexedSeq"),
+      -> msgs("Range.map.map -> IndexedSeq"),
 
     "for (p <- (20 until 0 by -2).zipWithIndex) yield p.toString"
-      -> streamMsg("Range.zipWithIndex.map -> IndexedSeq"),
+      -> msgs("Range.zipWithIndex.map -> IndexedSeq"),
 
     "for ((v, i) <- (20 until 0 by -2).zipWithIndex) yield (v + i)"
-      -> streamMsg("Range.zipWithIndex.withFilter.map -> IndexedSeq"),
+      -> msgs("Range.zipWithIndex.withFilter.map -> IndexedSeq"),
 
     "Array((1, 2)).map({ case (x, y) => x + y })"
-      -> streamMsg("Array.map -> Array"),
+      -> msgs("Array.map -> Array"),
 
     """Array((1, 2), (3, 4))
         .map(_ match { case p @ (i, j) => (i * 10, j / 10.0) })
         .map({ case (k, l) => k + l })"""
-      -> streamMsg("Array.map.map -> Array"),
+      -> msgs("Array.map.map -> Array"),
 
     "Array(1, 3, 4).take(2)"
-      -> streamMsg("Array.take -> Array"),
+      -> msgs("Array.take -> Array"),
 
     "List(1, 3, 4).take(2)"
-      -> streamMsg("List.take -> List"),
+      -> msgs("List.take -> List"),
 
     """
       // Range.drop returns a Range.
@@ -362,7 +362,7 @@ object IntegrationTests
         (0 to 2).drop(2), Option(1).drop(2), Some(1).drop(2), None.drop(2)
       )
     """
-      -> streamMsg(),
+      -> msgs(),
 
     """
       // This one throws in LambdaLift because symbol foo is not found.
@@ -379,7 +379,7 @@ object IntegrationTests
       } get;
       msg
     """
-      -> streamMsg(),
+      -> msgs(),
 
     """
       // By-value params in method called by sub-trees seem to cause symbol
@@ -388,13 +388,13 @@ object IntegrationTests
       def wrap[T](body: => T): Option[T] = Option(body)
       wrap({ val x = 10; Option(x) }) getOrElse 0
     """
-      -> streamMsg(),
+      -> msgs(),
 
     """
       val col: List[Int] = (0 to 2).toList;
       col.filter(v => (v % 2) == 0).map(_ * 2)
     """
-      -> streamMsg("Range.toList -> List", "List.filter.map -> List"),
+      -> msgs("Range.toList -> List", "List.filter.map -> List"),
 
     """val n = 10;
       for (i <- 0 to n;
@@ -402,14 +402,14 @@ object IntegrationTests
            if i % 2 == 1)
         yield { i + j }
     """
-      -> streamMsg("Range.flatMap(Range.withFilter.map) -> IndexedSeq"),
+      -> msgs("Range.flatMap(Range.withFilter.map) -> IndexedSeq"),
 
     """val n = 10;
       for (i <- 0 to n;
            j <- i to 0 by -1)
         yield { i + j }
     """
-      -> streamMsg("Range.flatMap(Range.map) -> IndexedSeq"),
+      -> msgs("Range.flatMap(Range.map) -> IndexedSeq"),
 
     """val n = 20;
       for (i <- 0 to n;
@@ -421,7 +421,7 @@ object IntegrationTests
            m <- l to n)
         yield { sum * m }
     """
-      -> streamMsg("Range.flatMap(Range.flatMap(Range.flatMap(Range.map.withFilter.flatMap(Range.map)))) -> IndexedSeq"),
+      -> msgs("Range.flatMap(Range.flatMap(Range.flatMap(Range.map.withFilter.flatMap(Range.map)))) -> IndexedSeq"),
 
     """val n = 20;
       for (i <- 0 to n;
@@ -432,7 +432,7 @@ object IntegrationTests
            k <- (i + j) to n)
         yield { (ii, jj, k) }
     """
-      -> streamMsg("Range.map.flatMap(Range.map.withFilter.flatMap(Range.map)) -> IndexedSeq"),
+      -> msgs("Range.map.flatMap(Range.map.withFilter.flatMap(Range.map)) -> IndexedSeq"),
 
     """
       val n = 5
@@ -440,7 +440,7 @@ object IntegrationTests
         (i, v, j)
       }
     """
-      -> streamMsg("Range.flatMap(Range.toArray.flatMap(Range.map)) -> IndexedSeq"),
+      -> msgs("Range.flatMap(Range.toArray.flatMap(Range.map)) -> IndexedSeq"),
 
     """
       val start = 10
@@ -449,7 +449,7 @@ object IntegrationTests
           (() => (i * 2))
       ).map(_())
     """
-      -> streamMsg("Range.map.map -> IndexedSeq"),
+      -> msgs("Range.map.map -> IndexedSeq"),
 
     """
       var tot = 0;
@@ -461,13 +461,13 @@ object IntegrationTests
               tot += (i * 1 + j * 10 + k * 100 + l * 1000) / 10;
       tot
     """
-      -> streamMsg((1 to 4).map(_ => "Range.foreach"):_*),
+      -> msgs((1 to 4).map(_ => "Range.foreach"):_*),
 
     """
       def foo[T](v: List[(Int, T)]) = v.map(_._2).filter(_ != null);
       foo(List((1, "a")))
     """
-      -> streamMsg("List.map.filter -> List"),
+      -> msgs("List.map.filter -> List"),
 
     """
       val o = Option(10)
@@ -476,35 +476,35 @@ object IntegrationTests
         m
       })
     """
-      -> streamMsg("Option.flatMap -> Option"),
+      -> msgs("Option.flatMap -> Option"),
 
     "List(Some(List(1)), None).flatMap(_.getOrElse(List(-1)))"
-      -> streamMsg("List.flatMap -> List", "Option.getOrElse"),
-      // TODO: -> streamMsg("List.flatMap(Option.getOrElse) -> List"),
+      -> msgs("List.flatMap -> List", "Option.getOrElse"),
+      // TODO: -> msgs("List.flatMap(Option.getOrElse) -> List"),
 
     "Option(Some(2)).flatten"
-      -> streamMsg("Option.flatten -> Option", "Option.foreach"),
+      -> msgs("Option.flatten -> Option", "Option.foreach"),
 
     "Option(Option(1)).flatten"
-      -> streamMsg("Option.flatten -> Option", "Option.foreach"),
+      -> msgs("Option.flatten -> Option", "Option.foreach"),
 
     "Seq(Option(None).flatten)"
-      -> streamMsg(),
+      -> msgs(),
 
     "List(List(1, 2), List(3, 4)).flatten"
-      -> streamMsg("List.flatten -> List", "List.foreach"),
+      -> msgs("List.flatten -> List", "List.foreach"),
 
     "List(List(1, 2), Seq(3, 4), Set(5, 6)).flatten"
-      -> streamMsg("List.flatten -> List"),
+      -> msgs("List.flatten -> List"),
 
     "List(Option(1), None, Some(2)).flatten"
-      -> streamMsg("List.flatten -> List", "Option.foreach"),
+      -> msgs("List.flatten -> List", "Option.foreach"),
 
     "var tot = 0; for (i <- 0 until 10; x = new AnyRef) { tot += i }; tot"
-      -> streamMsg("Range.map.foreach"),
+      -> msgs("Range.map.foreach"),
 
     "var tot = 0; for (i <- 0 until 10; x = 8) { tot += i }; tot"
-      -> streamMsg("Range.map.foreach")
+      -> msgs("Range.map.foreach")
 
   ).map({
     case (src, msgs) =>
