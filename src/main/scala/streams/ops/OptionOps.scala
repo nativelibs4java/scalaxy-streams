@@ -11,23 +11,24 @@ private[streams] trait OptionOps
   object SomeOptionOp extends StreamOpExtractor {
     override def unapply(tree: Tree) = Option(tree) collect {
       case q"$target.get" =>
-        (target, OptionGetOrElseOp("get", q"""
+        (target, OptionGetOrElseOp("get", lambdaCount = 0, q"""
           throw new NoSuchElementException("None.get")
         """))
 
       case q"$target.orNull[${_}](${_})" =>
-        (target, OptionGetOrElseOp("orNull", q"null"))
+        (target, OptionGetOrElseOp("orNull", lambdaCount = 0, q"null"))
 
       case q"$target.getOrElse[${_}]($v)" =>
-        (target, OptionGetOrElseOp("getOrElse", v))
+        (target, OptionGetOrElseOp("getOrElse", lambdaCount = 1, v))
 
       case q"$target.orElse[$tpt]($orElseValue)" =>
         (target, OptionOrElseOp(componentTpe = tpt.tpe, orElseValue))
     }
   }
 
-  case class OptionGetOrElseOp(name: String, defaultValue: Tree) extends StreamOp {
-    override def lambdaCount = 1
+  case class OptionGetOrElseOp(name: String,
+                               override val lambdaCount: Int,
+                               defaultValue: Tree) extends StreamOp {
     override def sinkOption = Some(ScalarSink)
     override def canAlterSize = true
     override def describe = Some(name)
