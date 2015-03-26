@@ -8,7 +8,7 @@ import org.junit.runners.Parameterized.Parameters
 
 import scala.collection.JavaConversions._
 
-import IntegrationTests.{streamMsg, potentialSideEffectMsgs}
+import IntegrationTests.{msgs, potentialSideEffectMsgs}
 
 object StrategyTest extends StreamComponentsTestBase with StreamTransforms
 
@@ -30,17 +30,17 @@ class StrategyTest {
     """
 
     { import scalaxy.streams.strategy.safer
-      testMessages(src, streamMsg("Range.map.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.safe
-      testMessages(src, streamMsg("Range.map.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.aggressive
-      testMessages(src, streamMsg("Range.map.map.map -> IndexedSeq").
+      testMessages(src, msgs("Range.map.map.map -> IndexedSeq").
         copy(warnings = potentialSideEffectMsgs("scala.Predef.print"))) }
 
     { import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("Range.map.map.map -> IndexedSeq").
+      testMessages(src, msgs("Range.map.map.map -> IndexedSeq").
         copy(warnings = potentialSideEffectMsgs("scala.Predef.print"))) }
   }
 
@@ -50,17 +50,17 @@ class StrategyTest {
     val src = "(0 to 2).map(i => () => i).map(f => (f(), f)).map(_._2())"
 
     { import scalaxy.streams.strategy.safer
-      testMessages(src, streamMsg("Range.map.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.safe
-      testMessages(src, streamMsg("Range.map.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.aggressive
-      testMessages(src, streamMsg("Range.map.map.map -> IndexedSeq"),
+      testMessages(src, msgs("Range.map.map.map -> IndexedSeq"),
         expectWarningRegexp = Some(List(fnRx, fnRx))) }
 
     { import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("Range.map.map.map -> IndexedSeq"),
+      testMessages(src, msgs("Range.map.map.map -> IndexedSeq"),
         expectWarningRegexp = Some(List(fnRx, fnRx))) }
   }
 
@@ -70,17 +70,17 @@ class StrategyTest {
     val src = "(0 to 2).map(i => () => i).map(_()).takeWhile(_ < 1)"
 
     { import scalaxy.streams.strategy.safer
-      testMessages(src, streamMsg("Range.map.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.safe
-      testMessages(src, streamMsg("Range.map.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.aggressive
-      testMessages(src, streamMsg("Range.map.map.takeWhile -> IndexedSeq"),
+      testMessages(src, msgs("Range.map.map.takeWhile -> IndexedSeq"),
         expectWarningRegexp = Some(List(fnRx))) }
 
     { import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("Range.map.map.takeWhile -> IndexedSeq"),
+      testMessages(src, msgs("Range.map.map.takeWhile -> IndexedSeq"),
         expectWarningRegexp = Some(List(fnRx))) }
   }
 
@@ -90,17 +90,17 @@ class StrategyTest {
     val src = "(0 to 2).map(i => () => i).map(_()).filter(_ > 1)"
 
     { import scalaxy.streams.strategy.safer
-      testMessages(src, streamMsg("Range.map.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.safe
-      testMessages(src, streamMsg("Range.map.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.aggressive
-      testMessages(src, streamMsg("Range.map.map.filter -> IndexedSeq"),
+      testMessages(src, msgs("Range.map.map.filter -> IndexedSeq"),
         expectWarningRegexp = Some(List(fnRx))) }
 
     { import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("Range.map.map.filter -> IndexedSeq"),
+      testMessages(src, msgs("Range.map.map.filter -> IndexedSeq"),
         expectWarningRegexp = Some(List(fnRx))) }
   }
 
@@ -109,13 +109,13 @@ class StrategyTest {
     val src = "(0 to 2).map(i => (() => i)())"
 
     { import scalaxy.streams.strategy.safer
-      testMessages(src, streamMsg("Range.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.safe
-      testMessages(src, streamMsg("Range.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.aggressive
-      testMessages(src, streamMsg("Range.map -> IndexedSeq"),
+      testMessages(src, msgs("Range.map -> IndexedSeq"),
         expectWarningRegexp = Some(List(fnRx))) }
   }
 
@@ -130,17 +130,17 @@ class StrategyTest {
     val outsiderRx = raw".*outsider.*"
 
     { import scalaxy.streams.strategy.safer
-      testMessages(src, streamMsg("Range.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.safe
-      testMessages(src, streamMsg("Range.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.aggressive
-      testMessages(src, streamMsg("Range.map.map.map -> IndexedSeq"),
+      testMessages(src, msgs("Range.map.map.map -> IndexedSeq"),
         expectWarningRegexp = Some(List(outsiderRx, newObjectRx, outsiderRx))) }
 
     { import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("Range.map.map.map -> IndexedSeq"),
+      testMessages(src, msgs("Range.map.map.map -> IndexedSeq"),
         expectWarningRegexp = Some(List(outsiderRx, newObjectRx, outsiderRx))) }
   }
 
@@ -155,17 +155,17 @@ class StrategyTest {
     val totRx = raw".*\.tot\b.*"
 
     { import scalaxy.streams.strategy.safer
-      testMessages(src, streamMsg("Range.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.safe
-      testMessages(src, streamMsg("Range.map -> IndexedSeq")) }
+      testMessages(src, msgs("Range.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.aggressive
-      testMessages(src, streamMsg("Range.map.foreach"),
+      testMessages(src, msgs("Range.map.foreach"),
         expectWarningRegexp = Some(List(newObjectRx, totRx))) }
 
     { import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("Range.map.foreach"),
+      testMessages(src, msgs("Range.map.foreach"),
         expectWarningRegexp = Some(List(newObjectRx, totRx))) }
   }
 
@@ -179,12 +179,12 @@ class StrategyTest {
     """
 
     { import scalaxy.streams.strategy.safer
-      testMessages(src, streamMsg(
+      testMessages(src, msgs(
         "Array.map -> ArrayOps"//, "Array.filter -> Array", "Array.map -> Array"
       )) }
 
     { import scalaxy.streams.strategy.safe
-      testMessages(src, streamMsg("Array.map.filter.map -> Array")) }
+      testMessages(src, msgs("Array.map.filter.map -> Array")) }
   }
 
   @Test
@@ -195,7 +195,7 @@ class StrategyTest {
       testMessages(src, CompilerMessages()) }
 
     { import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("List.map -> List")) }
+      testMessages(src, msgs("List.map -> List")) }
   }
 
   @Test
@@ -206,7 +206,7 @@ class StrategyTest {
       testMessages(src, CompilerMessages()) }
 
     { import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("List.filter -> List")) }
+      testMessages(src, msgs("List.filter -> List")) }
   }
 
   @Test
@@ -217,7 +217,7 @@ class StrategyTest {
       testMessages(src, CompilerMessages()) }
 
     { import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("Array.takeWhile -> Array")) }
+      testMessages(src, msgs("Array.takeWhile -> Array")) }
   }
 
   @Test
@@ -228,6 +228,6 @@ class StrategyTest {
       testMessages(src, CompilerMessages()) }
 
     { import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("Array.dropWhile -> Array")) }
+      testMessages(src, msgs("Array.dropWhile -> Array")) }
   }
 }

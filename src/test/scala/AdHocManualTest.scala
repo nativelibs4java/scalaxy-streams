@@ -8,7 +8,7 @@ import org.junit.runners.Parameterized.Parameters
 
 import scala.collection.JavaConversions._
 
-import IntegrationTests.{streamMsg, potentialSideEffectMsgs}
+import IntegrationTests.{msgs, potentialSideEffectMsgs}
 
 /** This is just a testbed for "fast" manual tests */
 class AdHocManualTest
@@ -81,7 +81,7 @@ class AdHocManualTest
     
     {
       import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("List.flatten -> List", "Option.foreach"))
+      testMessages(src, msgs("List.flatten -> List", "Option.foreach"))
         // expectWarningRegexp = Some(List("there were \\d+ inliner warnings; re-run with -Yinline-warnings for details")))
     }
   }
@@ -147,7 +147,7 @@ class AdHocManualTest
     // assertPluginCompilesSnippetFine(src)
 
     // import scalaxy.streams.strategy.foolish
-    // testMessages(src, streamMsg("List.map -> List", "List.withFilter.foreach"))
+    // testMessages(src, msgs("List.map -> List", "List.withFilter.foreach"))
   }
 
   // @Test
@@ -170,7 +170,7 @@ class AdHocManualTest
     """
 
     import scalaxy.streams.strategy.safe
-    testMessages(src, streamMsg("Option.get"))
+    testMessages(src, msgs("Option.get"))
 
     //   // val (_, messages) = compileFast(src)
     //   // println(messages)
@@ -215,7 +215,7 @@ class AdHocManualTest
 
     {
       import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg())
+      testMessages(src, msgs())
 
     //   // val (_, messages) = compileFast(src)
     //   // println(messages)
@@ -224,7 +224,7 @@ class AdHocManualTest
 
   // @Test
   def testPerf {
-    // streamMsg("Range.map.flatMap(Range.map.withFilter.flatMap(Range.map)) -> IndexedSeq"),
+    // msgs("Range.map.flatMap(Range.map.withFilter.flatMap(Range.map)) -> IndexedSeq"),
 
     ensureFasterCodeWithSameResult(
       decls = "",

@@ -8,7 +8,7 @@ import org.junit.runners.Parameterized.Parameters
 
 import scala.collection.JavaConversions._
 
-import IntegrationTests.{streamMsg, potentialSideEffectMsgs}
+import IntegrationTests.{msgs, potentialSideEffectMsgs}
 
 /** This is just a testbed for "fast" manual tests */
 class OptionStreamsTest
@@ -64,7 +64,7 @@ class OptionStreamsTest
 
     // {
     //   import scalaxy.streams.strategy.foolish
-    //   testMessages(src, streamMsg("Some.orElse(Some.map).map -> Option"),
+    //   testMessages(src, msgs("Some.orElse(Some.map).map -> Option"),
     //     expectWarningRegexp = Some(List("there were \\d+ inliner warnings; re-run with -Yinline-warnings for details")))
     // }
   }
