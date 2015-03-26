@@ -28,25 +28,42 @@ trait StreamComponentsTestBase extends Utils with ConsoleReporters
   def compileOpt(source: String) = compile(source, opt = true)
   def compileFast(source: String) = compile(source, opt = false)
 
-  private[this] def compile(source: String, opt: Boolean = false): (() => Any, CompilerMessages) = {
-    val infosBuilder = ListBuffer[String]()
-    val warningsBuilder = ListBuffer[String]()
-    val errorsBuilder = ListBuffer[String]()
-    val frontEnd = new FrontEnd {
-      override def display(info: Info) {
-        val builder: ListBuffer[String] = info.severity match {
-          case INFO => infosBuilder
-          case WARNING => warningsBuilder
-          case ERROR => errorsBuilder
-        }
-
-        builder += info.msg
-      }
-      override def interactive() {}
+  private[this] def threadLocal[A](a: => A) =
+    new ThreadLocal[A] {
+      override def initialValue() = a
     }
-    val toolbox = currentMirror.mkToolBox(
-      frontEnd = frontEnd,
-      options = if (opt) commonOptions + optOptions else commonOptions)
+
+  private[this] val infosBuilder = threadLocal(ListBuffer[String]())
+  private[this] val warningsBuilder = threadLocal(ListBuffer[String]())
+  private[this] val errorsBuilder = threadLocal(ListBuffer[String]())
+
+  private[this] val frontEnd = new FrontEnd {
+    override def display(info: Info) {
+      val builder: ListBuffer[String] = info.severity match {
+        case INFO => infosBuilder.get
+        case WARNING => warningsBuilder.get
+        case ERROR => errorsBuilder.get
+      }
+
+      builder += info.msg
+    }
+    override def interactive() {}
+  }
+
+  private[this] def makeToolbox(opt: Boolean) =
+    currentMirror.mkToolBox(
+      frontEnd,
+      if (opt) commonOptions + optOptions else commonOptions)
+
+  private[this] val optToolbox = threadLocal(makeToolbox(true))
+  private[this] val normalToolbox = threadLocal(makeToolbox(false))
+
+  private[this] def compile(source: String, opt: Boolean = false): (() => Any, CompilerMessages) = {
+    infosBuilder.get.clear()
+    warningsBuilder.get.clear()
+    errorsBuilder.get.clear()
+    
+    val toolbox = (if (opt) optToolbox else normalToolbox).get
     import toolbox.u._
 
     try {
@@ -56,9 +73,9 @@ trait StreamComponentsTestBase extends Utils with ConsoleReporters
       (
         compilation,
         CompilerMessages(
-          infos = infosBuilder.result,
-          warnings = warningsBuilder.result,
-          errors = errorsBuilder.result)
+          infos = infosBuilder.get.result,
+          warnings = warningsBuilder.get.result,
+          errors = errorsBuilder.get.result)
       )
     } catch { case ex: Throwable =>
       throw new RuntimeException(s"Failed to compile:\n$source", ex)
