@@ -44,7 +44,7 @@ trait StreamTransforms
         try {
           val result: Tree = stream
             .emitStream(
-              n => newTermName(fresh(n)),
+              n => TermName(fresh(n)),
               recur,
               currentOwner = currentOwner,
               typed = typecheck)
