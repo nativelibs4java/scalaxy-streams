@@ -171,31 +171,50 @@ object IntegrationTests
     "Some(10).map(_ * 2).get"
       -> streamMsg("Some.map.get"),
 
-    """(
-      (None: Option[Any]).getOrElse(2), Option[Any](null).getOrElse(2), Some(1).getOrElse(2),
-      (None: Option[Any]).orNull, Option[Any](null).orNull, Some[Any](1).orNull
-    )"""
-      -> streamMsg(
-        "Option.getOrElse", "Option.getOrElse", "Some.getOrElse",
-        "Option.orNull", "Option.orNull", "Some.orNull"),
+    "(None: Option[Any]).getOrElse(2)"
+      -> streamMsg("Option.getOrElse"),
+    "Option[Any](null).getOrElse(2)"
+      -> streamMsg("Option.getOrElse"),
+    "Some(1).getOrElse(2)"
+      -> streamMsg("Some.getOrElse"),
+    "(None: Option[Any]).orNull"
+      -> streamMsg("Option.orNull"),
+    "Option[Any](null).orNull"
+      -> streamMsg("Option.orNull"),
+    "Some[Any](1).orNull"
+      -> streamMsg("Some.orNull"),
 
-    """(
-      (None: Option[Int]).isEmpty, Option[Any](null).isEmpty, Some(1).isEmpty,
-      (None: Option[Int]).isDefined, Option[Any](null).isDefined, Some(1).isDefined,
-      (None: Option[Int]).nonEmpty, Option[Any](null).nonEmpty, Some(1).nonEmpty
-    )"""
-      -> streamMsg(
-        "Option.isEmpty", "Option.isEmpty", "Some.isEmpty",
-        "Option.isDefined", "Option.isDefined", "Some.isDefined",
-        "Option.nonEmpty", "Option.nonEmpty", "Some.nonEmpty"),
+    "(None: Option[Int]).isEmpty"
+      -> streamMsg("Option.isEmpty"),
+    "Option[Any](null).isEmpty"
+      -> streamMsg("Option.isEmpty"),
+    "Some(1).isEmpty"
+      -> streamMsg("Some.isEmpty"),
+    "(None: Option[Int]).isDefined"
+      -> streamMsg("Option.isDefined"),
+    "Option[Any](null).isDefined"
+      -> streamMsg("Option.isDefined"),
+    "Some(1).isDefined"
+      -> streamMsg("Some.isDefined"),
+    "(None: Option[Int]).nonEmpty"
+      -> streamMsg("Option.nonEmpty"),
+    "Option[Any](null).nonEmpty"
+      -> streamMsg("Option.nonEmpty"),
+    "Some(1).nonEmpt"
+      -> streamMsg("Some.nonEmpty"),
 
-    """(
-      (Array[Int]()).isEmpty, List[Int]().isEmpty, (0 until 0).isEmpty,
-      (Array[Int]()).nonEmpty, List[Int]().nonEmpty, (0 until 0).nonEmpty
-    )"""
-      -> streamMsg(
-        "Array.isEmpty", "List.isEmpty", "Range.isEmpty",
-        "Array.nonEmpty", "List.nonEmpty", "Range.nonEmpty"),
+    "(Array[Int]()).isEmpty"
+      -> streamMsg("Array.isEmpty"),
+    "List[Int]().isEmpty"
+      -> streamMsg("List.isEmpty"),
+    "(0 until 0).isEmpty"
+      -> streamMsg("Range.isEmpty"),
+    "(Array[Int]()).nonEmpty"
+      -> streamMsg("Array.nonEmpty"),
+    "List[Int]().nonEmpty"
+      -> streamMsg("List.nonEmpty"),
+    "(0 until 0).nonEmpty"
+      -> streamMsg("Range.nonEmpty"),
 
     "for (o <- Some(Some(10)); v <- o) yield v"
       -> streamMsg("Some.flatMap(Option.map) -> Option"),
