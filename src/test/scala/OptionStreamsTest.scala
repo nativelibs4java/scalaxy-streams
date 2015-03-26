@@ -18,11 +18,11 @@ class OptionStreamsTest
 {
   import global._
 
-  scalaxy.streams.impl.verbose = true
+  scalaxy.streams.flags.verbose = true
 
-  // scalaxy.streams.impl.veryVerbose = true
-  // scalaxy.streams.impl.debug = true
-  // scalaxy.streams.impl.quietWarnings = true
+  // scalaxy.streams.flags.veryVerbose = true
+  // scalaxy.streams.flags.debug = true
+  // scalaxy.streams.flags.quietWarnings = true
 
   @Test
   def testOptionCombinations {

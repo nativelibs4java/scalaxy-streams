@@ -132,7 +132,7 @@ private[streams] trait Strategies
         return false
       }
 
-      def reportIgnoredUnsafeSideEffects(): Unit = if (!impl.quietWarnings) {
+      def reportIgnoredUnsafeSideEffects(): Unit = if (!flags.quietWarnings) {
         for (effects <- stream.closureSideEffectss;
              effect <- effects;
              if effect.severity == SideEffectSeverity.Unsafe) {
@@ -184,7 +184,7 @@ private[streams] trait Strategies
         (isStrategyUnsafe || isStreamSafe) &&
         ((strategy.speedup == SpeedupCriteria.AlwaysEvenIfSlower) || isFaster)
 
-      if (impl.veryVerbose) {
+      if (flags.veryVerbose) {
         for (effects <- stream.closureSideEffectss;
              effect <- effects;
              if !reportedSideEffects(effect)) {

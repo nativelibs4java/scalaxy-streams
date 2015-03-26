@@ -18,11 +18,11 @@ class AdHocManualTest
 {
   import global._
 
-  scalaxy.streams.impl.verbose = true
+  scalaxy.streams.flags.verbose = true
 
-  // scalaxy.streams.impl.veryVerbose = true
-  // scalaxy.streams.impl.debug = true
-  // scalaxy.streams.impl.quietWarnings = true
+  // scalaxy.streams.flags.veryVerbose = true
+  // scalaxy.streams.flags.debug = true
+  // scalaxy.streams.flags.quietWarnings = true
 
   val fnRx = raw".*scala\.Function0\.apply.*"
 
@@ -46,37 +46,43 @@ class AdHocManualTest
   // @Test
   def testComp2 {
 
-    // assertPluginCompilesSnippetFine(src)
+    // val res = {
+    //   var value$macro$5: Nothing = null.asInstanceOf[Nothing];
+    //   var nonEmpty$macro$6: Boolean = false;
+    //   {
+    //     val item$macro$1: None.type = scala.None;
+    //     val nonEmpty$macro$2: Boolean = item$macro$1.ne(null);
+    //     if (nonEmpty$macro$2)
+    //       item$macro$1.foreach[Unit](((item$macro$4: Nothing) => {
+    //         value$macro$5 = item$macro$4;
+    //         nonEmpty$macro$6 = true
+    //       }))
+    //     else
+    //       ()
+    //   };
+    //   if (nonEmpty$macro$6)
+    //     scala.Some.apply[Nothing](value$macro$5)
+    //   else
+    //     scala.None
+    // }
+
+    // println("YAY")
+    // println("res: " + res)
+
     val src = """
-      def foo[T](v: List[(Int, T)]) = v.map(_._2).filter(_ != null);
-      foo(List((1, "a")))
+      import org.scalatest._
+      // import scala.scalajs.js
+
+      // val a = js.Array(1, 2, 3)
+      val a = Array(1, 2, 3)
+      a.map(_ * 2)
     """
-    // val src = s"""
-    //   def f1(x: Any) = x.toString + "1"
-    //   def f2(x: Any) = x.toString + "2"
-    //   def f3(x: Any) = x.toString + "3"
-
-    //   List(
-    //     ${{
-    //       val options = List(
-    //         "None",
-    //         "(None: Option[Int])",
-    //         "Option[Any](null)",
-    //         "Option[String](null)",
-    //         "Option[String](\"Y\")",
-    //         "Some(0)",
-    //         "Some(\"X\")")
-    //       for (lhs <- options; rhs <- options) yield
-    //         s"$lhs.map(f1).orElse($rhs.map(f2)).map(f3)"
-    //     }.mkString(",\n        ")}
-    //   )
-    // """
-    // println(src)
-
+    assertPluginCompilesSnippetFine(src)
+    
     {
       import scalaxy.streams.strategy.foolish
-      testMessages(src, streamMsg("List.map.filter -> List"),
-        expectWarningRegexp = Some(List("there were \\d+ inliner warnings; re-run with -Yinline-warnings for details")))
+      testMessages(src, streamMsg("List.flatten -> List", "Option.foreach"))
+        // expectWarningRegexp = Some(List("there were \\d+ inliner warnings; re-run with -Yinline-warnings for details")))
     }
   }
   // @Test

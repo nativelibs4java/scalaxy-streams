@@ -47,7 +47,7 @@ private[streams] class StreamsComponent(
 
   override def newPhase(prev: Phase) = new StdPhase(prev) {
     def apply(unit: CompilationUnit) {
-      if (!impl.disabled) {
+      if (!flags.disabled) {
         val transformer = new TypingTransformer(unit) {
 
           def typed(tree: Tree) = try {

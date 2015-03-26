@@ -26,11 +26,11 @@ trait StreamTransforms
   = tree match {
     case tree @ SomeStream(stream) if !hasKnownLimitationOrBug(stream) =>
       if (isBlacklisted(tree.pos, currentOwner)) {
-        if (impl.verbose) {
+        if (flags.verbose) {
           info(
               tree.pos,
               Optimizations.messageHeader + s"Skipped stream ${stream.describe()}",
-              force = impl.verbose)
+              force = flags.verbose)
         }
         None
       } else if (isWorthOptimizing(stream, strategy)) {
@@ -39,22 +39,22 @@ trait StreamTransforms
         info(
           tree.pos,
           Optimizations.optimizedStreamMessage(stream.describe(), strategy),
-          force = impl.verbose)
+          force = flags.verbose)
 
         try {
           val result: Tree = stream
             .emitStream(
-              n => TermName(fresh(n)),
+              n => newTermName(fresh(n)),
               recur,
               currentOwner = currentOwner,
               typed = typecheck)
             .compose(typecheck)
 
-          if (impl.debug) {
+          if (flags.debug) {
             info(
               tree.pos,
               Optimizations.messageHeader + s"Result for ${stream.describe()} (owner: ${currentOwner.fullName}):\n$result",
-              force = impl.verbose)
+              force = flags.verbose)
           }
           Some(result)
 
@@ -64,11 +64,11 @@ trait StreamTransforms
             None
         }
       } else {
-        if (impl.veryVerbose && !stream.isDummy && !impl.quietWarnings) {
+        if (flags.veryVerbose && !stream.isDummy && !flags.quietWarnings) {
           info(
             tree.pos,
             Optimizations.messageHeader + s"Stream ${stream.describe()} is not worth optimizing with strategy $strategy",
-            force = impl.verbose)
+            force = flags.verbose)
         }
         None
       }

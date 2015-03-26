@@ -20,38 +20,6 @@ package streams
 {
   object impl
   {
-    private[streams] var debug: Boolean =
-      System.getenv("SCALAXY_STREAMS_DEBUG") == "1" ||
-      System.getProperty("scalaxy.streams.debug") == "true"
-
-    private[streams] var veryVerbose: Boolean =
-      debug ||
-      System.getenv("SCALAXY_STREAMS_VERY_VERBOSE") == "1" ||
-      System.getProperty("scalaxy.streams.veryVerbose") == "true"
-
-    // TODO: optimize this (trait).
-    private[streams] var verbose: Boolean =
-      veryVerbose ||
-      System.getenv("SCALAXY_STREAMS_VERBOSE") == "1" ||
-      System.getProperty("scalaxy.streams.verbose") == "true"
-
-    private[streams] var disabled: Boolean =
-      System.getenv("SCALAXY_STREAMS_OPTIMIZE") == "0" ||
-      System.getProperty("scalaxy.streams.optimize") == "false"
-
-    /** For testing */
-    private[streams] var quietWarnings = false
-
-    private[streams] def withQuietWarnings[A](a: => A): A = {
-      val old = quietWarnings
-      try {
-        quietWarnings = true
-        a
-      } finally {
-        quietWarnings = old
-      }
-    }
-
     def recursivelyOptimize[A : c.WeakTypeTag](c: Context)(a: c.Expr[A]): c.Expr[A] = {
       optimize[A](c)(a, recurse = true)
     }
@@ -66,7 +34,7 @@ package streams
         c.mirror.staticClass(_),
         tpe => c.inferImplicitValue(tpe, pos = a.tree.pos))
 
-      if (disabled) {
+      if (flags.disabled) {
         a
       } else {
         object Optimize extends StreamTransforms with WithMacroContext {

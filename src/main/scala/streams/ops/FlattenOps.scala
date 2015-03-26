@@ -1,6 +1,6 @@
 package scalaxy.streams
 
-import impl.withQuietWarnings
+import flags.withQuietWarnings
 
 private[streams] trait FlattenOps
     extends ClosureStreamOps

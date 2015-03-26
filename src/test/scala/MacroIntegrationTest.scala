@@ -22,9 +22,9 @@ class MacroIntegrationTest(
 
 object MacroIntegrationTest
     extends StreamComponentsTestBase with StreamTransforms {
-  scalaxy.streams.impl.verbose = true
-  scalaxy.streams.impl.veryVerbose = false
-  scalaxy.streams.impl.quietWarnings = true
+  scalaxy.streams.flags.verbose = true
+  scalaxy.streams.flags.veryVerbose = false
+  scalaxy.streams.flags.quietWarnings = true
 
   implicit def strategy = scalaxy.streams.strategy.foolish
 

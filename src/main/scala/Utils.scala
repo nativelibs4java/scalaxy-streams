@@ -55,7 +55,7 @@ trait Utils {
     try {
       Some(v)
     } catch { case ex: Throwable =>
-      if (impl.debug)
+      if (flags.debug)
         ex.printStackTrace()
       None
     }
@@ -64,7 +64,7 @@ trait Utils {
     try {
       v
     } catch { case ex: Throwable =>
-      if (impl.debug)
+      if (flags.debug)
         ex.printStackTrace()
       None
     }

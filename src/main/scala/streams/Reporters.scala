@@ -10,7 +10,7 @@ trait Reporters {
 
   def logException(pos: Position, ex: Throwable) = {
     warning(pos, Optimizations.messageHeader + "An exception ocurred: " + ex)
-    if (impl.veryVerbose) {
+    if (flags.veryVerbose) {
       ex.printStackTrace()
     }
   }
