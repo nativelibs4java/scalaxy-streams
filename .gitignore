@@ -1,2 +1,4 @@
 target/
 *.class
+.ensime_lucene/
+tmp/

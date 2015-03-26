@@ -115,7 +115,7 @@ If you're using `sbt` 0.13.0+, just put the following lines in `build.sbt`:
 * To use the macro (manually decide which parts of your code are optimized):
 
   ```scala
-  scalaVersion := "2.11.5"
+  scalaVersion := "2.11.6"
 
   // Dependency at compilation-time only (not at runtime).
   libraryDependencies += "com.nativelibs4java" %% "scalaxy-streams" % "0.3.4" % "provided"
@@ -142,7 +142,7 @@ If you're using `sbt` 0.13.0+, just put the following lines in `build.sbt`:
 * To use the compiler plugin (optimizes all of your code):
 
   ```scala
-  scalaVersion := "2.11.5"
+  scalaVersion := "2.11.6"
 
   autoCompilerPlugins := true
 
@@ -175,7 +175,7 @@ With Maven, you'll need this in your `pom.xml` file:
   <dependencies>
     <dependency>
       <groupId>com.nativelibs4java</groupId>
-      <artifactId>scalaxy-streams_2.11.5</artifactId>
+      <artifactId>scalaxy-streams_2.11</artifactId>
       <version>0.3.4</version>
     </dependency>
   </dependencies>
@@ -186,7 +186,7 @@ With Maven, you'll need this in your `pom.xml` file:
   <dependencies>
     <dependency>
       <groupId>com.nativelibs4java</groupId>
-      <artifactId>scalaxy-streams_2.11.5</artifactId>
+      <artifactId>scalaxy-streams_2.11</artifactId>
       <version>0.4-SNAPSHOT</version>
     </dependency>
   </dependencies>
@@ -203,7 +203,7 @@ With Maven, you'll need this in your `pom.xml` file:
 
   ```xml
   <properties>
-    <scala.version>2.11.5</scala.version>
+    <scala.version>2.11.6</scala.version>
   </properties>
   <dependencies>
     <dependency>
