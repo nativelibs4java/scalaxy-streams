@@ -18,7 +18,7 @@ object StreamsCompiler {
 
   def main(args: Array[String]) {
     try {
-      compile(args, consoleReportGetter)
+      makeCompiler(consoleReportGetter)(args)
     } catch {
       case ex: Throwable =>
         ex.printStackTrace
@@ -32,19 +32,16 @@ object StreamsCompiler {
   def defaultInternalPhasesGetter: Global => List[PluginComponent] =
     StreamsPlugin.getInternalPhases _
 
-  def compile[R <: Reporter](args: Array[String],
-      reporterGetter: Settings => R,
-      internalPhasesGetter: Global => List[PluginComponent] = defaultInternalPhasesGetter): R =
+  def makeCompiler[R <: Reporter]
+                  (reporterGetter: Settings => R,
+                   internalPhasesGetter: Global => List[PluginComponent] = defaultInternalPhasesGetter)
+                  : (Array[String] => Unit) =
   {
     val settings = new Settings
 
     val jars = scalaLibraryJar ++ streamsLibraryJar
     val bootclasspathArg = if (jars.isEmpty) Nil else List("-bootclasspath", jars.reduce(_ + ":" + _))
-    val command = new CompilerCommand(bootclasspathArg ++ args, settings)
-
-    if (!command.ok)
-      System.exit(1)
-
+    
     val reporter = reporterGetter(settings)
     val global = new Global(settings, reporter) {
       override protected def computeInternalPhases() {
@@ -52,8 +49,39 @@ object StreamsCompiler {
         phasesSet ++= internalPhasesGetter(this)
       }
     }
-    new global.Run().compile(command.files)
 
-    reporter
+    (args: Array[String]) => {
+      val command = new CompilerCommand(bootclasspathArg ++ args, settings)
+
+      if (!command.ok)
+        System.exit(1)
+
+      new global.Run().compile(command.files)
+    }
   }
+
+  // def compile[R <: Reporter](args: Array[String],
+  //     reporterGetter: Settings => R,
+  //     internalPhasesGetter: Global => List[PluginComponent] = defaultInternalPhasesGetter): R =
+  // {
+  //   val settings = new Settings
+
+  //   val jars = scalaLibraryJar ++ streamsLibraryJar
+  //   val bootclasspathArg = if (jars.isEmpty) Nil else List("-bootclasspath", jars.reduce(_ + ":" + _))
+  //   val command = new CompilerCommand(bootclasspathArg ++ args, settings)
+
+  //   if (!command.ok)
+  //     System.exit(1)
+
+  //   val reporter = reporterGetter(settings)
+  //   val global = new Global(settings, reporter) {
+  //     override protected def computeInternalPhases() {
+  //       super.computeInternalPhases
+  //       phasesSet ++= internalPhasesGetter(this)
+  //     }
+  //   }
+  //   new global.Run().compile(command.files)
+
+  //   reporter
+  // }
 }

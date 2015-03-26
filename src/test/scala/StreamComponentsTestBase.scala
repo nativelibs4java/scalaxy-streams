@@ -83,7 +83,12 @@ trait StreamComponentsTestBase extends Utils with ConsoleReporters
   }
 
   def optimizedCode(source: String, strategy: OptimizationStrategy): String = {
-    val src = s"{ import ${strategy.fullName} ; scalaxy.streams.optimize { $source } }"
+    val src = s"""{
+      import ${strategy.fullName}
+      scalaxy.streams.optimize {
+        $source
+      }
+    }"""
     // println(src)
     src
   }
@@ -128,6 +133,10 @@ trait StreamComponentsTestBase extends Utils with ConsoleReporters
     assertEquals(expectedMessages.errors, actualMessages.errors)
   }
 
+  val pluginCompiler = threadLocal {
+    StreamsCompiler.makeCompiler(StreamsCompiler.consoleReportGetter)
+  }
+
   def assertPluginCompilesSnippetFine(source: String) {
     val sourceFile = {
       import java.io._
@@ -141,7 +150,7 @@ trait StreamComponentsTestBase extends Utils with ConsoleReporters
     }
 
     val args = Array(sourceFile.toString)
-    StreamsCompiler.compile(args, StreamsCompiler.consoleReportGetter)
+    pluginCompiler.get()(args)
   }
 
   case class Exceptional(exceptionString: String)
