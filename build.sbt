@@ -4,7 +4,7 @@ organization := "com.nativelibs4java"
 
 version := "0.4-SNAPSHOT"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.6"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
@@ -23,13 +23,9 @@ fork in Test := true
 
 scalacOptions ++= Seq(
   "-encoding", "UTF-8",
-  "-deprecation",
-  "-Xlog-free-types",
-  "-optimise",
-  "-Yclosure-elim",
-  "-Yinline",
-  "-feature",
-  "-unchecked"
+  "-deprecation", "-feature", "-unchecked",
+  "-optimise", "-Yclosure-elim", "-Yinline",
+  "-Xlog-free-types"
 )
 
 watchSources <++= baseDirectory map { path => (path / "examples" ** "*.scala").get }
