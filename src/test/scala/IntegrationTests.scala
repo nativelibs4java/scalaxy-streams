@@ -35,6 +35,12 @@ object IntegrationTests
     // (0 until n).dropWhile(x => x < n / 2).toSeq
     // (0 until n).filter(v => (v % 2) == 0).map(_ * 2).toArray.toSeq
 
+    "scala.scalajs.js.Array(1, 2, 3).map(_ + 2)"
+      -> msgs("js.Array.map -> js.Array"),
+
+    "scala.scalajs.js.Array(1, 2, 3).foreach(println)"
+      -> msgs("js.Array.foreach"),
+
     "for ((a, b) <- Array(null, (1, 2))) yield (a + b)"
       -> msgs("Array.withFilter.map -> Array"),
 

@@ -70,11 +70,8 @@ class AdHocManualTest
     // println("res: " + res)
 
     val src = """
-      import org.scalatest._
-      // import scala.scalajs.js
-
-      // val a = js.Array(1, 2, 3)
-      val a = Array(1, 2, 3)
+      val a = scala.scalajs.js.Array(1, 2, 3)
+      // val a = Array(1, 2, 3)
       a.map(_ * 2)
     """
     assertPluginCompilesSnippetFine(src)

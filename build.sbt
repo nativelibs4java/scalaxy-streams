@@ -13,6 +13,7 @@ libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _)
 libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _)
 
 libraryDependencies ++= Seq(
+  "org.scala-js" %% "scalajs-library" % "0.6.2" % "test",
   "junit" % "junit" % "4.12" % "test",
   "com.novocode" % "junit-interface" % "0.11" % "test"
 )
