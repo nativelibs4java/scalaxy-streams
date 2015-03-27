@@ -21,6 +21,10 @@ object flags
     System.getenv("SCALAXY_STREAMS_OPTIMIZE") == "0" ||
     System.getProperty("scalaxy.streams.optimize") == "false"
 
+  private[streams] var strategy: Option[String] =
+    Option(System.getenv("SCALAXY_STREAMS_STRATEGY"))
+      .orElse(Option(System.getProperty("scalaxy.streams.strategy")))
+
   /** For testing */
   private[streams] var quietWarnings = false
 

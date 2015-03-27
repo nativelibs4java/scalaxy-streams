@@ -91,16 +91,5 @@ object strategy {
     else Some(strategyByName(name))
 
   private[streams] lazy val global: OptimizationStrategy =
-    javaProp.orElse(envVarOpt).
-      flatMap(forName).
-      getOrElse(default)
-
-  private[this] val STRATEGY_PROPERTY = "scalaxy.streams.strategy"
-  private[this] val STRATEGY_ENV_VAR = "SCALAXY_STREAMS_STRATEGY"
-
-  private[this] val envVarOpt =
-    Option(System.getenv(STRATEGY_ENV_VAR))
-  private[this] def javaProp =
-    Option(System.getProperty(STRATEGY_PROPERTY))
+    flags.strategy.flatMap(forName).getOrElse(default)
 }
-
