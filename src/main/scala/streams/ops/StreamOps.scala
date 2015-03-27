@@ -70,49 +70,5 @@ private[streams] trait StreamOps
           (src, ops)
       })
     }
-
-    // def unapply(tree: Tree): Option[(Tree, List[StreamOp])] = Option(tree) collect {
-    //   case SomeForeachOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeCoerceOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeMapOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeCountOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeCollectOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeFlatMapOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeFindOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeWhileOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeOptionOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeFilterOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeZipWithIndexOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeArrayOpsOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case SomeToCollectionOp(SomeStreamOps(src, ops), op) =>
-    //     (src, ops :+ op)
-
-    //   case _ =>
-    //     (tree, Nil)
-    // }
   }
 }
