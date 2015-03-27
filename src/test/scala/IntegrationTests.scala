@@ -200,7 +200,7 @@ object IntegrationTests
       -> msgs("Option.nonEmpty"),
     "Option[Any](null).nonEmpty"
       -> msgs("Option.nonEmpty"),
-    "Some(1).nonEmpt"
+    "Some(1).nonEmpty"
       -> msgs("Some.nonEmpty"),
 
     "(Array[Int]()).isEmpty"
