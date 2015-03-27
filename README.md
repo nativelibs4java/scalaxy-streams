@@ -1,4 +1,4 @@
-[![Maven Central](https://img.shields.io/maven-central/v/com.nativelibs4java/scalaxy-streams_2.11.svg)]() [![Build Status](https://travis-ci.org/nativelibs4java/scalaxy-streams.svg?branch=feature_travis-build)](https://travis-ci.org/nativelibs4java/scalaxy-streams) [![Join the chat at https://gitter.im/nativelibs4java/Scalaxy](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nativelibs4java/Scalaxy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
+[![Maven Central](https://img.shields.io/maven-central/v/com.nativelibs4java/scalaxy-streams_2.11.svg)]() [![Build Status](https://travis-ci.org/nativelibs4java/scalaxy-streams.svg?branch=master)](https://travis-ci.org/nativelibs4java/scalaxy-streams) [![Join the chat at https://gitter.im/nativelibs4java/Scalaxy](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nativelibs4java/Scalaxy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
  
 # Scalaxy/Streams
 
