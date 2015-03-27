@@ -18,7 +18,8 @@ private[streams] trait CanBuildFromSinks
       canBuildFrom.tpe.baseType(sym)
     }
 
-    override def describe = Some(toTpe.typeSymbol.fullName)
+    override def describe =
+      Some(toTpe.typeSymbol.fullName.replaceAll("^scala\\.collection(\\.immutable)?\\.", ""))
 
     override def usesSizeHint = true
 
