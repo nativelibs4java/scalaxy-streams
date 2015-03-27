@@ -21,9 +21,7 @@ private[streams] trait ScalaJsSymbols
 
   def scalaJsStaticClass(name: String): Option[Symbol] = {
     try {
-      val c = Option(rootMirror.staticClass(name))
-      println(s"scalaJsStaticClass($name) = $c")
-      c
+      Option(rootMirror.staticClass(name))
     } catch {
       case ex: Throwable =>
         if (flags.debug)
@@ -33,9 +31,7 @@ private[streams] trait ScalaJsSymbols
   }
   def scalaJsStaticModule(name: String): Option[Symbol] = {
     try {
-      val c = Option(rootMirror.staticModule(name))
-      println(s"scalaJsStaticModule($name) = $c")
-      c
+      Option(rootMirror.staticModule(name))
     } catch {
       case ex: Throwable =>
         if (flags.debug)
