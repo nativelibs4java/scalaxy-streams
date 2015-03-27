@@ -20,4 +20,10 @@ class ArrayOpsTest extends StreamComponentsTestBase with StreamTransforms {
     val SomeArrayOpsOp(_, ArrayOpsOp) = typecheck(q"floatArrayOps(Array[Float]())")
     val SomeArrayOpsOp(_, ArrayOpsOp) = typecheck(q"doubleArrayOps(Array[Double]())")
   }
+
+  @Test
+  def testJsExtraction {
+    val SomeJsArrayOpsOp(_, JsArrayOpsOp) = typecheck(
+      q"scala.scalajs.js.Any.jsArrayOps[Int](scala.scalajs.js.Array[Int]())")
+  }
 }

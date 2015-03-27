@@ -17,6 +17,17 @@ class StreamSourcesTest extends StreamComponentsTestBase with StreamTransforms {
   }
 
   @Test
+  def testJsArrayExtractor {
+    val v1 @ SomeJsArrayStreamSource(_) = typecheck(
+      q"scala.scalajs.js.Array(1)")
+    val SomeStreamSource(_) = v1
+
+    val v2 @ SomeJsArrayStreamSource(_) = typecheck(
+      q"(null: scala.scalajs.js.Array[Int])")
+    val SomeStreamSource(_) = v2
+  }
+
+  @Test
   def testInlineRangeExtractor {
     val v1 @ SomeInlineRangeStreamSource(InlineRangeStreamSource(_, _, 1, true, _)) = typecheck(q"1 to 10")
     val SomeStreamSource(_) = v1
