@@ -12,6 +12,7 @@ private[streams] trait StreamOps
     with FlatMapOps
     with ForeachOps
     with IsEmptyOps
+    with JsArrayOpsOps
     with MapOps
     with MkStringOps
     with OptionOps
@@ -38,6 +39,7 @@ private[streams] trait StreamOps
       SomeFlatMapOp,
       SomeForeachOp,
       SomeIsEmptyOp,
+      SomeJsArrayOpsOp,
       SomeMapOp,
       SomeMkStringOp,
       SomeOptionOp,

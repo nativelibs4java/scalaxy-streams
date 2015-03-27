@@ -71,15 +71,17 @@ while (i < length) {
 Scalaxy/Streams rewrites streams with the following components:
 
 * Stream sources:
-  * `Array`,
   * inline `Range`,
   * `Option` (with special case for explicit `Option(x)`),
   * explicit `Seq(a, b, ...)` (array-based rewrite),
   * `List` (with special array-based rewrite for explicit `List(a, b, ...)`)
+  * `Array` & `ArrayOps`,
+  * `js.Array` & `js.ArrayOps` (JavaScript Array in [Scala.js](www.scala-js.org))
 * Stream operations:
   * `filter`, `filterNot`, `withFilter`,
   * `map`,
   * `flatMap` (with or without nested streams),
+  * `flatten`,
   * `count`,
   * `exists`, `forall`,
   * `find`

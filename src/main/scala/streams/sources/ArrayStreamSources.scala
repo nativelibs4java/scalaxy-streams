@@ -2,7 +2,6 @@ package scalaxy.streams
 
 private[streams] trait ArrayStreamSources
     extends ArrayBuilderSinks
-    with ArrayOpsOps
     with StreamInterruptors
 {
   val global: scala.reflect.api.Universe
