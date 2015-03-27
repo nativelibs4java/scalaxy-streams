@@ -5,6 +5,7 @@
 Latest release: 0.3.4 (2014-11-04, see [Changelog](#changelog))
 
 Quick links:
+* [Slides of Scalaxy/Streams talk @ Scala.io 2014 Paris](https://docs.google.com/presentation/d/100NlsLI79I1ljseCnY7r0IX3AUFKR7BqykOKdm4PRMw/edit#slide=id.p)
 * [Usage with Sbt](#usage-with-sbt)
 * [Usage with Maven](#usage-with-maven)
 * [Usage with Eclipse](#usage-with-eclipse)
