@@ -1,4 +1,4 @@
-# sudo: false
+# Needed to avoid cryptic EOFException crashes in forked tests.
 sudo: required
 language: scala
 scala:
@@ -10,7 +10,7 @@ cache:
   - $HOME/.sbt
 
 script:
-- sbt ++$TRAVIS_SCALA_VERSION 'set javaOptions += "-Djunit.parallel.threads=1"' 'set
+- sbt ++$TRAVIS_SCALA_VERSION 'set javaOptions += "-Djunit.parallel.threads=2"' 'set
   parallelExecution in Test := false' test
 
 env:
