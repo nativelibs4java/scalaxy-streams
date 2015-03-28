@@ -9,12 +9,21 @@ trait Streams
 
   object SomeStream extends Extractor[Tree, Stream] {
     def findSink(ops: List[StreamComponent]): Option[StreamSink] = {
+      def isAcceptableSink(sink: StreamSink, indexFromEnd: Int): Boolean = {
+        val res = (sink != InvalidSink) &&
+          (!sink.isFinalOnly || indexFromEnd == 0)
+
+        if (flags.debug)
+          println("Unacceptable sink: " + sink + " for list of ops " + ops)
+        res
+      }
+
       ops.reverse.toIterator.zipWithIndex.map({
         case (op, i) => (op.sinkOption, i)
-      }) collectFirst {
-        case (Some(sink), i) if !sink.isFinalOnly || i == 0 =>
+      }).collectFirst({
+        case (Some(sink), i) if isAcceptableSink(sink, i) =>
           sink
-      }
+      })
     }
 
     def unapply(tree: Tree): Option[Stream] = tree match {
@@ -22,11 +31,11 @@ trait Streams
         Some(new Stream(tree, source, ops, sink, hasExplicitSink = true))
 
       case SomeStreamOps(SomeStreamSource(source), ops) =>
-        findSink(source :: ops).filter(_ != InvalidSink)
+        findSink(source :: ops)
           .map(sink => new Stream(tree, source, ops, sink, hasExplicitSink = false))
 
       case SomeStreamSource(source) =>
-        findSink(List(source)).filter(_ != InvalidSink)
+        findSink(List(source))
           .map(sink => new Stream(tree, source, Nil, sink, hasExplicitSink = false))
 
       case _ =>
@@ -42,6 +51,7 @@ trait Streams
       hasExplicitSink: Boolean)
   {
     // println("FOUND STREAM: " + describe())
+    // println("FOUND STREAM: " + this)
 
     def isDummy: Boolean =
       ops.isEmpty && (!hasExplicitSink || sink.isJustAWrapper)

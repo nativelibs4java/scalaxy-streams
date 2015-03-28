@@ -3,6 +3,7 @@ package scalaxy.streams
 private[streams] trait StreamSources
   extends InlineRangeStreamSources
   with InlineSeqStreamSources
+  with IteratorStreamSources
   with ListStreamSources
   with OptionStreamSources
   with ArrayStreamSources
@@ -16,6 +17,7 @@ private[streams] trait StreamSources
       case SomeInlineRangeStreamSource(source) => source
       case SomeInlineSeqStreamSource(source)   => source
       case SomeListStreamSource(source)        => source
+      case SomeIteratorStreamSource(source)    => source
       case SomeOptionStreamSource(source)      => source
       case SomeArrayStreamSource(source)       => source
       case SomeJsArrayStreamSource(source)     => source

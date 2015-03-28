@@ -11,6 +11,14 @@ class StreamsTest extends StreamComponentsTestBase with StreamTransforms {
   import global._
 
   @Test
+  def testListToIterator {
+    val SomeStream(Stream(_, source, List(ToIteratorOp), IteratorSink, false)) = typecheck(q"""
+      List(1).toIterator
+    """)
+    val ArrayStreamSource(_, Some("List"), _) = source
+  }
+
+  @Test
   def testFindSink {
     assertEquals(Some(ArrayOpsSink), SomeStream.findSink(List(ArrayOpsOp)))
     assertEquals(Some(VectorBuilderSink), SomeStream.findSink(List(ArrayOpsOp, VectorBuilderSink)))

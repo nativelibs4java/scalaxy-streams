@@ -2,8 +2,9 @@ package scalaxy.streams
 
 private[streams] trait ToCollectionOps
     extends StreamComponents
-    with ListBufferSinks
     with ArrayBuilderSinks
+    with IteratorSinks
+    with ListBufferSinks
     with VectorBuilderSinks
 {
   val global: scala.reflect.api.Universe
@@ -11,6 +12,9 @@ private[streams] trait ToCollectionOps
 
   object SomeToCollectionOp extends StreamOpExtractor {
     override def unapply(tree: Tree) = Option(tree) collect {
+      case q"$target.toIterator" =>
+        (target, ToIteratorOp)
+
       case q"$target.toList" =>
         (target, ToListOp)
 
@@ -33,4 +37,6 @@ private[streams] trait ToCollectionOps
   case object ToArrayOp extends ToCollectionOp("toArray", ArrayBuilderSink)
 
   case object ToVectorOp extends ToCollectionOp("toVector", VectorBuilderSink)
+
+  case object ToIteratorOp extends ToCollectionOp("toIterator", IteratorSink)
 }

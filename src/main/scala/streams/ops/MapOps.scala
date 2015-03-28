@@ -12,7 +12,7 @@ private[streams] trait MapOps
       case q"$target.map[${_}, ${_}](${Closure(closure)})($canBuildFrom)" =>
         (target, MapOp(closure, canBuildFrom = Some(canBuildFrom)))
 
-      // Option.map doesn't take a CanBuildFrom.
+      // Option.map and Iterator.map don't take a CanBuildFrom.
       case q"$target.map[${_}](${Closure(closure)})" =>
         (target, MapOp(closure, canBuildFrom = None))
     }

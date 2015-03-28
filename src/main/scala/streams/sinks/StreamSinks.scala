@@ -3,6 +3,7 @@ package scalaxy.streams
 private[streams] trait StreamSinks
     extends StreamComponents
     with ArrayBuilderSinks
+    with IteratorSinks
     with ListBufferSinks
     with SetBuilderSinks
     with VectorBuilderSinks
@@ -15,6 +16,9 @@ private[streams] trait StreamSinks
       case q"$target.toList" =>
         (target, ListBufferSink)
 
+      case q"$target.toIterator" =>
+        (target, IteratorSink)
+
       case q"$target.toArray[${_}](${_})" =>
         (target, ArrayBuilderSink)
 
@@ -23,8 +27,6 @@ private[streams] trait StreamSinks
 
       case q"$target.toVector" =>
         (target, VectorBuilderSink)
-
-      // case _ if { println(tree); false } => null
     }
   }
 }
