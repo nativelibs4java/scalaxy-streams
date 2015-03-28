@@ -8,12 +8,8 @@ private[streams] trait ListStreamSources
   import global._
 
   object SomeListStreamSource {
-    // Testing the type would be so much better, but yields an awkward MissingRequirementError.
-    // lazy val ArrayTpe = typeOf[Array[_]]
-    private[this] lazy val ListSym = rootMirror.staticClass("scala.List")
-
     def unapply(tree: Tree): Option[ListStreamSource] = Option(tree) collect {
-      case _ if tree.tpe != null && tree.tpe != NoType && tree.tpe <:< typeOf[List[Any]] =>
+      case _ if Option(tree.tpe).exists(_ <:< typeOf[List[Any]]) =>
         ListStreamSource(tree)
     }
   }
