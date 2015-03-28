@@ -65,6 +65,9 @@ private[streams] trait StreamComponents
 
   trait StreamSink extends StreamOp
   {
+    /** Sometimes, a sink may not be emit-able because it's not implemented, but can appear in intermediate ops (as long as it's followed by an implemented sink. */
+    def isImplemented = true
+
     /** If true, this sink is skipped unless it's at the end of the stream, i.e. after all ops. */
     def isFinalOnly: Boolean = false
     /** Sinks are "neutral" and chainable / elidable by default, except for scalar sinks. */

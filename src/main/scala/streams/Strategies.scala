@@ -83,6 +83,9 @@ private[streams] trait Strategies
         // Option.withFilter returns an Option#WithFilter
         true
 
+      case _ if !stream.sink.isImplemented =>
+        true
+
       case _ if hasTryOrByValueSubTrees =>
         true
 
