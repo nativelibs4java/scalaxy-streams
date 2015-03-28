@@ -35,6 +35,22 @@ object IntegrationTests
     // (0 until n).dropWhile(x => x < n / 2).toSeq
     // (0 until n).filter(v => (v % 2) == 0).map(_ * 2).toArray.toSeq
 
+    """
+      List(1, 2, 3, 4)
+        .toIterator
+        .map(_ + 1)
+        .filter(_ % 2 == 0)
+        .map(_ * 10)
+        .toList
+    """
+      -> msgs("List.toIterator.map.filter.map -> List"),
+
+    "List(1, 2, 3).toIterator.toList.toArray"
+      -> msgs("List.toIterator.toList -> Array"),
+
+    "Iterator(1, 2, 3).toList"
+      -> msgs("Iterator.toList -> List"),
+
     "scala.scalajs.js.Array(1, 2, 3).map(_ + 2)"
       -> msgs("js.Array.map -> js.Array"),
 
