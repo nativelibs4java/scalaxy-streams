@@ -1,6 +1,6 @@
 // See: http://www.scala-sbt.org/0.13/docs/Resolvers.html
 
-Resolver.typesafeRepo("releases")
+resolvers += Resolver.typesafeRepo("releases")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-scalariform" % "1.3.0")
 
