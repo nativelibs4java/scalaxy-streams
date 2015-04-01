@@ -6,5 +6,4 @@ dependencies:
 
 test:
   override:
-    - sbt 'set javaOptions += "-Djunit.parallel.threads=2"' 'set
-  parallelExecution in Test := false' test
+    - sbt 'set javaOptions += "-Djunit.parallel.threads=2"' 'set parallelExecution in Test := false' test
