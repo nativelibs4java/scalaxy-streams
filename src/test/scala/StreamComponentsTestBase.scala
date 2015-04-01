@@ -33,48 +33,54 @@ trait StreamComponentsTestBase extends Utils with ConsoleReporters
       override def initialValue() = a
     }
 
-  private[this] val infosBuilder, warningsBuilder, errorsBuilder =
-    threadLocal(ListBuffer[String]())
+  private[this] class TestToolbox(opt: Boolean) {
 
-  private[this] val frontEnd = new FrontEnd {
-    override def display(info: Info) {
-      val builder: ListBuffer[String] = info.severity match {
-        case INFO => infosBuilder.get
-        case WARNING => warningsBuilder.get
-        case ERROR => errorsBuilder.get
-      }
+    val infosBuilder, warningsBuilder, errorsBuilder =
+      ListBuffer[String]()
 
-      builder += info.msg
+    def reset() {
+      infosBuilder.clear()
+      warningsBuilder.clear()
+      errorsBuilder.clear()
     }
-    override def interactive() {}
-  }
+    
+    private[this] val frontEnd = new FrontEnd {
+      override def display(info: Info) {
+        val builder: ListBuffer[String] = info.severity match {
+          case INFO => infosBuilder
+          case WARNING => warningsBuilder
+          case ERROR => errorsBuilder
+        }
 
-  private[this] def makeToolbox(opt: Boolean) =
-    currentMirror.mkToolBox(
+        builder += info.msg
+      }
+      override def interactive() {}
+    }
+
+    val toolbox = currentMirror.mkToolBox(
       frontEnd,
       if (opt) commonOptions + optOptions else commonOptions)
+  }
 
-  private[this] val optToolbox = threadLocal(makeToolbox(true))
-  private[this] val normalToolbox = threadLocal(makeToolbox(false))
+  private[this] val optToolbox = threadLocal(new TestToolbox(true))
+  private[this] val normalToolbox = threadLocal(new TestToolbox(false))
 
   private[this] def compile(source: String, opt: Boolean = false): (() => Any, CompilerMessages) = {
-    infosBuilder.get.clear()
-    warningsBuilder.get.clear()
-    errorsBuilder.get.clear()
     
-    val toolbox = (if (opt) optToolbox else normalToolbox).get
-    import toolbox.u._
+    val testToolbox = (if (opt) optToolbox else normalToolbox).get
+    testToolbox.reset()
+    import testToolbox.toolbox.u._
 
     try {
-      val tree = toolbox.parse(source);
-      val compilation = toolbox.compile(tree)
+      val tree = testToolbox.toolbox.parse(source);
+      val compilation = testToolbox.toolbox.compile(tree)
 
       (
         compilation,
         CompilerMessages(
-          infos = infosBuilder.get.result,
-          warnings = warningsBuilder.get.result,
-          errors = errorsBuilder.get.result)
+          infos = testToolbox.infosBuilder.result,
+          warnings = testToolbox.warningsBuilder.result,
+          errors = testToolbox.errorsBuilder.result)
       )
     } catch { case ex: Throwable =>
       throw new RuntimeException(s"Failed to compile:\n$source", ex)
