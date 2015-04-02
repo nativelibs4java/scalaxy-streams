@@ -60,11 +60,11 @@ private[streams] trait MkStringOps
           appendSep,
           appendInput,
           appendEnd), result) = typed(q"""
-        val $startVal: String = ${start.getOrElse(emptyString)};
-        val $sepVal: String = ${sep.getOrElse(emptyString)};
-        val $endVal: String = ${end.getOrElse(emptyString)};
-        val $builderVal = new scala.collection.mutable.StringBuilder();
-        var $firstVar: Boolean = true;
+        private[this] val $startVal: String = ${start.getOrElse(emptyString)};
+        private[this] val $sepVal: String = ${sep.getOrElse(emptyString)};
+        private[this] val $endVal: String = ${end.getOrElse(emptyString)};
+        private[this] val $builderVal = new scala.collection.mutable.StringBuilder();
+        private[this] var $firstVar: Boolean = true;
         $builderVal.append($startVal);
         if ($firstVar) {
           $firstVar = false;
