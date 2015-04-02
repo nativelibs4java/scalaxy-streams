@@ -89,6 +89,9 @@ trait Utils {
       .filter(_ != NoType)
       .map(normalize)
 
+  lazy val isPrimitiveNumeric: Type => Boolean =
+    Set(ByteTpe, IntTpe, ShortTpe, LongTpe, FloatTpe, DoubleTpe)
+
   def getDefaultValue(tpe: Type): Any = normalize(tpe) match {
     case IntTpe => 0
     case BooleanTpe => false
@@ -101,14 +104,15 @@ trait Utils {
     case s => null
   }
 
-  private[streams] def newVar(name: TermName, tpe: Type, rhs: Tree = EmptyTree): ValDef = {
-    val ntpe = normalize(tpe)
-    val initialValue = rhs.orElse(
-      Option(getDefaultValue(ntpe))
-        .map(v => Literal(Constant(v)))
-        .getOrElse(q"null.asInstanceOf[$tpe]"))
+  def getDefaultValueTree(tpe: Type): Tree = {
+    Option(getDefaultValue(tpe))
+      .map(v => Literal(Constant(v)))
+      .getOrElse(q"null.asInstanceOf[$tpe]")
+  }
 
+  private[streams] def newVar(name: TermName, tpe: Type, rhs: Tree = EmptyTree): ValDef = {
     // Note: null.asInstanceOf[T] would work in almost all cases as well.
-    q"private[this] var $name: $ntpe = $initialValue"
+    val ntpe = normalize(tpe)
+    q"private[this] var $name: $ntpe = ${rhs.orElse(getDefaultValueTree(ntpe))}"
   }
 }

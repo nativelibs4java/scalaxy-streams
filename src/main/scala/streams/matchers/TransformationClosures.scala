@@ -18,6 +18,13 @@ private[streams] trait TransformationClosures
     }
   }
 
+  object Closure2 {
+    def unapply(tree: Tree): Option[Function] = Option(tree) collect {
+      case Strip(closure @ Function(List(_, _), _)) =>
+        closure
+    }
+  }
+
   object SomeTransformationClosure {
     def unapply(closure: Tree): Option[TransformationClosure] = {
 

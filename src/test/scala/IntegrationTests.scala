@@ -304,6 +304,36 @@ object IntegrationTests
     "(1 to 3).map(_ * 2).filter(_ < 3).toArray"
       -> msgs("Range.map.filter -> Array"),
 
+    "List(1, 2).reduceLeft((a: Int, b: Int) => a * a + b)"
+      -> msgs("List.reduceLeft"),
+
+    "List[Int]().reduceLeft(_ + _)"
+      -> msgs("List.reduceLeft"),
+
+    "Array[Int]().reduceLeft(_ + _)"
+      -> msgs("Array.reduceLeft"),
+
+    "(1 to 3).reduceLeft(_ + _)"
+      -> msgs("Range.reduceLeft"),
+
+    "List(3, 1, 2).reduceLeft(_ min _)"
+      -> msgs("List.reduceLeft"),
+
+    """(
+      List[Int]().sum, List[Long]().sum, List[Short]().sum, List[Byte]().sum,
+      List[Double]().sum, List[Float]().sum
+    )"""
+      -> msgs("List.sum", "List.sum", "List.sum", "List.sum", "List.sum", "List.sum"),
+
+    """(
+      List[Int]().product, List[Long]().product, List[Short]().product, List[Byte]().product,
+      List[Double]().product, List[Float]().product
+    )"""
+      -> msgs("List.product", "List.product", "List.product", "List.product", "List.product", "List.product"),
+
+    "List[Int]().product"
+      -> msgs("List.product"),
+
     "(1 to 3).map(_ + 1).sum"
       -> msgs("Range.map.sum"),
 
