@@ -266,11 +266,11 @@ The Scalaxy/Stream compiler plugin is easy to setup in Eclipse with the Scala ID
 * Download the [stable scalaxy_streams_2.11 JAR on Maven Central](http://search.maven.org/remotecontent?filepath=com/nativelibs4java/scalaxy-streams_2.11/0.3.4/scalaxy-streams_2.11-0.3.4.jar), or the [snapshot JAR on Sonatype OSS](https://oss.sonatype.org/#nexus-search;quick~scalaxy_streams_2.11)
 * Provide the full path to the jar in Project / Properties / Scala Compiler / Advanced / Xplugin
 
-  ![advanced scala settings panel in eclipse](https://raw.githubusercontent.com/nativelibs4java/scalaxy-streams/master/resources/scalaxy_settings_eclipse.png)
+  ![advanced scala settings panel in eclipse](./Resources/wiki/scalaxy_settings_eclipse.png)
 
 * That's it!
 
-  ![scalaxy working in eclipse](https://raw.githubusercontent.com/nativelibs4java/scalaxy-streams/master/resources/scalaxy_working_in_eclipse.png)
+  ![scalaxy working in eclipse](./Resources/wiki/scalaxy_working_in_eclipse.png)
 
 ## A note on architecture
 
