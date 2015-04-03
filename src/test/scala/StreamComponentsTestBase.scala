@@ -113,29 +113,33 @@ trait StreamComponentsTestBase extends Utils with ConsoleReporters
       throw new RuntimeException(ex)
     }
 
-    if (expectedMessages.infos != actualMessages.infos) {
-      actualMessages.infos.foreach(println)
-      assertEquals(expectedMessages.infos, actualMessages.infos)
+    val processedActualMessages = actualMessages
+      .copy(warnings = actualMessages.warnings
+        .map(_.replaceAll("__wrapper[\\$\\w]+\\.", "")))
+
+    if (expectedMessages.infos != processedActualMessages.infos) {
+      processedActualMessages.infos.foreach(println)
+      assertEquals(expectedMessages.infos, processedActualMessages.infos)
     }
     expectWarningRegexp match {
       case Some(rxs) =>
-        val warnings = actualMessages.warnings
+        val warnings = processedActualMessages.warnings
         assert(expectedMessages.warnings.isEmpty)
         assertEquals(warnings.toString,
           rxs.size, warnings.size)
         for ((rx, warning) <- rxs.zip(warnings)) {
-          assertTrue(s"Expected '$rx', got '$warning'\n(full warnings: ${actualMessages.warnings})",
+          assertTrue(s"Expected '$rx', got '$warning'\n(full warnings: ${processedActualMessages.warnings})",
             warning.matches(rx))
         }
-        // assertEquals(actualMessages.warnings.toString,
-        //   count, actualMessages.warnings.size)
+        // assertEquals(processedActualMessages.warnings.toString,
+        //   count, processedActualMessages.warnings.size)
 
       case None =>
         assertEquals(
           expectedMessages.warnings.toSet,
-          actualMessages.warnings.toSet)
+          processedActualMessages.warnings.toSet)
     }
-    assertEquals(expectedMessages.errors, actualMessages.errors)
+    assertEquals(expectedMessages.errors, processedActualMessages.errors)
   }
 
   val pluginCompiler = threadLocal {
