@@ -25,6 +25,9 @@ trait SideEffectsDetection
     }
   }
 
+  private[this] def isBlacklisted(sym: Symbol): Boolean =
+    blacklistedMethods(sym.fullName)
+
   private[this] def isSideEffectFree(sym: Symbol): Boolean = {
     val result =
       sym.isPackage ||
@@ -79,6 +82,8 @@ trait SideEffectsDetection
           (target, name, targs, argss :+ newArgs)
       }
   }
+
+  private[this] lazy val ArrayModuleSym = rootMirror.staticModule("scala.Array")
 
   def analyzeSideEffects(tree: Tree): List[SideEffect] = {
     val effects = ArrayBuffer[SideEffect]()
@@ -146,6 +151,10 @@ trait SideEffectsDetection
               traverse(qualifier)
               traverse(other)
             }
+          case q"$arr.apply[${ _ }](..$args)" if arr.symbol == ArrayModuleSym =>
+            // Special case to handle partially-symbolized tree from SomeInlineSeqStreamSource.
+            // TODO(ochafi): Update SomeInlineSeqStreamSource to switch to an ArrayStreamSource during emit (where trees can be typed).
+            args.foreach(traverse(_))
 
           case SelectOrApply(qualifier, name, _, argss) =>
             keepWorstSideEffect {
@@ -158,9 +167,12 @@ trait SideEffectsDetection
                 isTrulyImmutableClass(qualifier.tpe)
 
               val safeSymbol =
-                localSymbols.contains(sym) ||
-                isSideEffectFree(sym) ||
-                qualifierIsImmutable
+                !isBlacklisted(sym) &&
+                (
+                  localSymbols.contains(sym) ||
+                  isSideEffectFree(sym) ||
+                  qualifierIsImmutable
+                )
 
               // if (safeSymbol) {
               //   println(s"""
@@ -183,7 +195,10 @@ trait SideEffectsDetection
                     addEffect(
                       SideEffect(
                         tree,
-                        s"Reference to " + sym.fullName,// (local symbols: $localSymbols",
+                        if (sym == NoSymbol)
+                          "Reference with no symbol: " + tree
+                        else
+                          "Reference to " + sym.fullName,// (local symbols: $localSymbols",
                         SideEffectSeverity.Unsafe))
                 }
               }

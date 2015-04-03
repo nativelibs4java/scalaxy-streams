@@ -74,6 +74,23 @@ private[streams] object SideEffectsWhitelists {
     "scala.reflect.ClassTag"
   )
 
+  lazy val blacklistedMethods = Set(
+    "scala.collection.immutable.StringLike.toInt",
+    "scala.collection.immutable.StringLike.toLong",
+    "scala.collection.immutable.StringLike.toShort",
+    "scala.collection.immutable.StringLike.toByte",
+    "scala.collection.immutable.StringLike.toBoolean",
+    "scala.collection.immutable.StringLike.toDouble",
+    "scala.collection.immutable.StringLike.toFloat",
+    "java.lang.Integer.parseInt",
+    "java.lang.Long.parseLong",
+    "java.lang.Short.parseShort",
+    "java.lang.Byte.parseByte",
+    "java.lang.Boolean.parseBoolean",
+    "java.lang.Double.parseDouble",
+    "java.lang.Float.parseFloat"
+  )
+
   /**
    * Any method of these classes is whitelisted.
    */

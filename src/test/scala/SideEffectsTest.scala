@@ -99,6 +99,40 @@ class SideEffectsTest
   }
 
   @Test
+  def unsafeCases_blacklisted {
+    expectSideEffectSeverities(List(Unsafe),
+      q""" "".toInt """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" "".toLong """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" "".toShort """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" "".toByte """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" "".toDouble """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" "".toFloat """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" "".toBoolean """)
+
+
+    expectSideEffectSeverities(List(Unsafe),
+      q""" Integer.parseInt("") """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" java.lang.Long.parseLong("") """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" java.lang.Short.parseShort("") """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" java.lang.Byte.parseByte("") """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" java.lang.Double.parseDouble("") """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" java.lang.Float.parseFloat("") """)
+    expectSideEffectSeverities(List(Unsafe),
+      q""" java.lang.Boolean.parseBoolean("") """)
+  }
+
+  @Test
   def unsafeCasesThatShouldBeRelaxedToProbablySafe {
     expectSideEffectSeverities(List(Unsafe),
       q"""{
