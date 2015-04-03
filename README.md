@@ -484,19 +484,22 @@ And if anyone wants to tackle [SI-1338](https://issues.scala-lang.org/browse/SI-
 
 # Self-optimization
 
-A project cannot depend on itself, even for the purpose of self-optimization.
-However...
-
+Scalaxy/Streams can optimize itself, although that is still being experimented with:
 ```
-sbt 'set name := "local-streams-bootstrap"' \
-    'set version := "0-SNAPSHOT"' \
-    clean publish-local
-
-SCALAXY_STREAMS_STRATEGY=aggressive \
-SCALAXY_STREAMS_VERY_VERBOSE=1 \
-sbt 'set addCompilerPlugin("com.nativelibs4java" %% "local-streams-bootstrap" % "0-SNAPSHOT")' \
-  clean compile test:compile
-
-sbt 'set addCompilerPlugin("com.nativelibs4java" %% "local-streams-bootstrap" % "0-SNAPSHOT")' \
-  test
+./Resources/scripts/self_optimize.sh
 ```
+
+To use the (experimental!) self-optimized compiler plugin / macros:
+  ```scala
+  scalaVersion := "2.11.6"
+
+  autoCompilerPlugins := true
+
+  addCompilerPlugin("com.nativelibs4java" %% "scalaxy-streams-experimental-self-optimized" % "0.4-SNAPSHOT")
+
+  scalacOptions += "-Xplugin-require:scalaxy-streams"
+  ```
+
+Your feedback is precious: did you run into issues with the self-optimized plugin? Do you find it any faster?
+
+(TODO(ochafik): check that the self-optimized version compiles scala itself just as fine as the original)
