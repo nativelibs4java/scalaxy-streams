@@ -498,6 +498,8 @@ To use the (experimental!) self-optimized compiler plugin / macros:
   addCompilerPlugin("com.nativelibs4java" %% "scalaxy-streams-experimental-self-optimized" % "0.4-SNAPSHOT")
 
   scalacOptions += "-Xplugin-require:scalaxy-streams"
+
+  resolvers += Resolver.sonatypeRepo("snapshots")
   ```
 
 Your feedback is precious: did you run into issues with the self-optimized plugin? Do you find it any faster?
