@@ -152,8 +152,6 @@ class StrategyTest {
       for (i <- 0 until 2; x = new AnyRef) { tot += i }
     """
 
-    val totRx = raw".*\.tot\b.*"
-
     { import scalaxy.streams.strategy.safer
       testMessages(src, msgs("Range.map -> IndexedSeq")) }
 
@@ -161,12 +159,12 @@ class StrategyTest {
       testMessages(src, msgs("Range.map -> IndexedSeq")) }
 
     { import scalaxy.streams.strategy.aggressive
-      testMessages(src, msgs("Range.map.foreach"),
-        expectWarningRegexp = Some(List(newObjectRx, totRx))) }
+      testMessages(src, msgs("Range.map.foreach")
+        .copy(warnings = potentialSideEffectMsgs("tot", "java.lang.Object.<init>"))) }
 
     { import scalaxy.streams.strategy.foolish
-      testMessages(src, msgs("Range.map.foreach"),
-        expectWarningRegexp = Some(List(newObjectRx, totRx))) }
+      testMessages(src, msgs("Range.map.foreach")
+        .copy(warnings = potentialSideEffectMsgs("tot", "java.lang.Object.<init>"))) }
   }
 
   // @Ignore
