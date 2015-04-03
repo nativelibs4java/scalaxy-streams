@@ -45,7 +45,13 @@ class OptionStreamsTest
       def f1(x: Any) = x.toString + "1"
       def f2(x: Any) = x.toString + "2"
       def f3(x: Any) = x.toString + "3"
-      def wrap[A](a: => A): Either[A, String] = try { Left(a) } catch { case ex => Right(ex.getMessage) }
+      def wrap[A](a: => A): Either[A, String] =
+        try {
+          Left(a)
+        } catch {
+          case ex: Throwable =>
+            Right(ex.getMessage)
+        }
 
       List(
         ${{
