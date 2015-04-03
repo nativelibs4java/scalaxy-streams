@@ -5,9 +5,11 @@ machine:
 dependencies:
   cache_directories:
     - ~/.m2
-    - "~/.ivy2"
-    - "~/.sbt"
+    - ~/.ivy2
+    - ~/.sbt
+    - ~/.scala-2.11.x
 
 test:
   override:
-    - sbt 'set javaOptions += "-Djunit.parallel.threads=2"' 'set parallelExecution in Test := false' test
+    - ./Resources/scripts/compile_scala.sh
+    #- sbt 'set javaOptions += "-Djunit.parallel.threads=2"' 'set parallelExecution in Test := false' test
