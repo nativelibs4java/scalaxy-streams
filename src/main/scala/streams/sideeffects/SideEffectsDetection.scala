@@ -137,10 +137,12 @@ trait SideEffectsDetection
               traverse(qualifier)
             }
 
-          case SelectOrApply(qualifier, N("equals" | "$eq$eq"), Nil, List(List(other)))
-              if !isTrulyImmutableClass(qualifier.tpe) =>
+          case SelectOrApply(qualifier, N(name @ ("equals" | "$eq$eq" | "$bang$eq" | "ne")), Nil, List(List(other)))
+              if !isTrulyImmutableClass(qualifier.tpe) || name == "ne" =>
             keepWorstSideEffect {
-              addEffect(SideEffect(tree, anyMethodMessage("equals"), SideEffectSeverity.ProbablySafe))
+              if (name != "ne") {
+                addEffect(SideEffect(tree, anyMethodMessage(name), SideEffectSeverity.ProbablySafe))
+              }
               traverse(qualifier)
               traverse(other)
             }

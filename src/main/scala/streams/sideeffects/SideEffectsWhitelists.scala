@@ -10,6 +10,7 @@ private[streams] object SideEffectsWhitelists {
     whitelistedPackages ++
     whitelistedClasses ++
     whitelistedMethods ++
+    whitelistedConstructors ++
     whitelistedPredefSymbols ++
     whitelistedRuntimeSymbols ++
     whitelistedModuleReferences
@@ -25,6 +26,10 @@ private[streams] object SideEffectsWhitelists {
     "scala.Option.option2Iterable", // What about indirect .toString?
     "scala.Array.canBuildFrom",
     "scala.collection.generic.GenericCompanion.apply"
+  )
+
+  private[this] lazy val whitelistedConstructors = Set[String](
+    "scala.Array.<init>"
   )
 
   /**
