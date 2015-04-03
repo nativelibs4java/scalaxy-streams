@@ -15,20 +15,28 @@ private[streams] trait Optimizations
   val global: scala.reflect.api.Universe
   import global._
 
-  lazy val OptimizationStrategyClass =
-    rootMirror.staticClass("scalaxy.streams.OptimizationStrategy")
+  private[this] lazy val OptimizationStrategyClassOpt =
+    try {
+      Some(rootMirror.staticClass("scalaxy.streams.OptimizationStrategy"))
+    } catch {
+      case ex: Throwable =>
+        ex.printStackTrace()
+        None
+    }
 
   def matchStrategyTree(inferImplicitValue: Type => Tree): OptimizationStrategy = 
   {
     flags.strategy.getOrElse {
-      val optimizationStrategyValue: Tree = try {
-        val tpe = OptimizationStrategyClass.asType.toType
-        inferImplicitValue(tpe)
-      } catch {
-        case ex: Throwable =>
-          ex.printStackTrace()
-          EmptyTree
-      }
+      val optimizationStrategyValue: Tree =
+        try {
+          OptimizationStrategyClassOpt
+            .map(sym => inferImplicitValue(sym.asType.toType))
+            .getOrElse(EmptyTree)
+        } catch {
+          case ex: Throwable =>
+            ex.printStackTrace()
+            EmptyTree
+        }
 
       optimizationStrategyValue match {
         case EmptyTree =>
