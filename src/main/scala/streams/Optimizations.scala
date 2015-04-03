@@ -20,21 +20,23 @@ private[streams] trait Optimizations
 
   def matchStrategyTree(inferImplicitValue: Type => Tree): OptimizationStrategy = 
   {
-    val optimizationStrategyValue: Tree = try {
-      val tpe = OptimizationStrategyClass.asType.toType
-      inferImplicitValue(tpe)
-    } catch {
-      case ex: Throwable =>
-        ex.printStackTrace()
-        EmptyTree
-    }
+    flags.strategy.flatMap(scalaxy.streams.strategy.forName).getOrElse {
+      val optimizationStrategyValue: Tree = try {
+        val tpe = OptimizationStrategyClass.asType.toType
+        inferImplicitValue(tpe)
+      } catch {
+        case ex: Throwable =>
+          ex.printStackTrace()
+          EmptyTree
+      }
 
-    optimizationStrategyValue match {
-      case EmptyTree =>
-        scalaxy.streams.strategy.global
+      optimizationStrategyValue match {
+        case EmptyTree =>
+          scalaxy.streams.strategy.global
 
-      case strategyTree =>
-        scalaxy.streams.strategy.forName(strategyTree.symbol.name.toString).get
+        case strategyTree =>
+          scalaxy.streams.strategy.forName(strategyTree.symbol.name.toString).get
+      }
     }
   }
 }
