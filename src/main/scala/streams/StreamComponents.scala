@@ -15,6 +15,15 @@ private[streams] trait StreamComponents
 
     def sinkOption: Option[StreamSink]
 
+    /**
+     * Subtrees that are kept as-is in the rewrites.
+     * For instance, a foldLeft's seed, or an mkString's separator.
+     */
+    def preservedSubTrees: List[Tree] = subTrees
+
+    /**
+     * Any sub-tree of the component (closures, normal preserved arguments...).
+     */
     def subTrees: List[Tree]
 
     def lambdaCount: Int = 0

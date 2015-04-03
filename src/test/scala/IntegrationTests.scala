@@ -13,16 +13,17 @@ case class IntegrationTest(name: String, source: String, expectedMessages: Compi
 object IntegrationTests
 {
   def msgs(streamDescriptions: String*)
-               (implicit strategy: scalaxy.streams.OptimizationStrategy) =
+          (implicit strategy: scalaxy.streams.OptimizationStrategy) =
     CompilerMessages(
       infos = streamDescriptions.map(Optimizations.optimizedStreamMessage(_, strategy)).toList)
 
   def potentialSideEffectMsgs(symFullNames: String*)
-               (implicit strategy: scalaxy.streams.OptimizationStrategy) =
+                             (implicit strategy: scalaxy.streams.OptimizationStrategy) =
     symFullNames.map(symFullName =>
       s"[Scalaxy] Potential side effect could cause issues with ${strategy.name} optimization strategy: Reference to $symFullName").toList
 
-  def data(implicit strategy: scalaxy.streams.OptimizationStrategy): List[IntegrationTest] = List[(String, CompilerMessages)](
+  def data(implicit strategy: scalaxy.streams.OptimizationStrategy)
+          : List[IntegrationTest] = List[(String, CompilerMessages)](
 
     // """{ object Foo { def doit(args: Array[String]) = args.length } ; Foo.doit(Array("1")) }"""
     //   -> CompilerMessages(),
@@ -361,8 +362,11 @@ object IntegrationTests
     """List(1, 2, 3).mkString("pre", ";", "post")"""
       -> msgs("List.mkString"),
 
-    """List(1, 2, 3).mkString(" ")"""
+    """List(1, 2, 3).mkString("+")"""
       -> msgs("List.mkString"),
+
+    """List(1, 2, 3).map(_ + 1).mkString("+")"""
+      -> msgs("List.map.mkString"),
 
     """List(1, 2, 3).mkString"""
       -> msgs("List.mkString"),

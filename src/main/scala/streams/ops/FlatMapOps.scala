@@ -49,6 +49,8 @@ private[streams] trait FlatMapOps
       nestedStream.map(_.subTrees).
         getOrElse(super.subTrees)
 
+    override def preservedSubTrees = Nil
+
     override def closureSideEffectss =
       nestedStream.map(_.closureSideEffectss).
         getOrElse(super.closureSideEffectss)

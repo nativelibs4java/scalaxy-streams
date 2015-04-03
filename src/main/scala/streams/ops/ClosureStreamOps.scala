@@ -12,7 +12,9 @@ private[streams] trait ClosureStreamOps
     def isMapLike: Boolean = true
     override def lambdaCount = 1
     override def subTrees: List[Tree] = List(closure)
-    private[this] def closureSideEffects = analyzeSideEffects(closure)
+    override def preservedSubTrees = Nil
+
+    private[this] lazy val closureSideEffects = analyzeSideEffects(closure)
     override def closureSideEffectss = List(closureSideEffects)
 
     lazy val closureSymbol = closure.symbol

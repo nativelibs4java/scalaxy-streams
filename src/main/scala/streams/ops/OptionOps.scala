@@ -32,7 +32,7 @@ private[streams] trait OptionOps
     override def sinkOption = Some(ScalarSink)
     override def canAlterSize = true
     override def describe = Some(name)
-    override def subTrees = Nil
+    override def subTrees = List(defaultValue)
     override def transmitOutputNeedsBackwards(paths: Set[TuploidPath]) =
       Set(RootTuploidPath) // TODO: refine this.
 

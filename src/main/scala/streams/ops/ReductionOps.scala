@@ -112,7 +112,8 @@ private[streams] trait ReductionOps
     override def opName = "reduceLeft"
     override def initialAccumulatorValue = None//getDefaultValueTree(tpe)
     override def throwsIfEmpty = true
-    override def subTrees = List(accumulatorValDef, newValueValDef, body)
+    override def subTrees = List(closure)
+    override def preservedSubTrees = Nil
 
     private[this] def makeParamScalarValue(param: ValDef): ScalarValue[Symbol] =
       ScalarValue(param.symbol.typeSignature, alias = param.symbol.asOption)

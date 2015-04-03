@@ -117,9 +117,6 @@ private[streams] trait Strategies
       def hasUnsafeEffect(effects: List[SideEffect]): Boolean =
         effects.exists(e => !safeSeverities(e.severity))
 
-      lazy val hasMoreThanOneLambdaWithUnsafeSideEffect =
-        stream.closureSideEffectss.count(hasUnsafeEffect) > 1
-
       def couldSkipSideEffects: Boolean = {
         var foundCanInterruptLoop = false
         for (op <- stream.ops.reverse) {
@@ -136,7 +133,7 @@ private[streams] trait Strategies
       }
 
       def reportIgnoredUnsafeSideEffects(): Unit = if (!flags.quietWarnings) {
-        for (effects <- stream.closureSideEffectss;
+        for (effects <- stream.closureSideEffectss ++ stream.preservedSubTreesSideEffectss;
              effect <- effects;
              if effect.severity == SideEffectSeverity.Unsafe) {
           reportedSideEffects += effect
@@ -167,9 +164,22 @@ private[streams] trait Strategies
           false
       }
 
-      def isStreamSafe =
-        stream.closureSideEffectss.count(hasUnsafeEffect) <= 1 &&
-        !couldSkipSideEffects
+      def isStreamSafe = {
+        // Note: we count the number of closures / ops that have side effects, not the
+        // number of side-effects themselves: we assume that within a closure the 
+        // side effects are still done in the same order, and likewise for preserved
+        // sub-trees that they're still evaluated in the same order within the same
+        // originating op. For instance with mkString(prefix, sep, suffix), prefix,
+        // sep and suffix will still be evaluated in the same order after the rewrite.
+        val unsafeClosureSideEffectCount =
+          stream.closureSideEffectss.count(hasUnsafeEffect)
+        def unsafePreservedTreesSideEffectsCount =
+          stream.preservedSubTreesSideEffectss.count(hasUnsafeEffect)
+
+        unsafeClosureSideEffectCount <= 1 &&
+          (unsafeClosureSideEffectCount + unsafePreservedTreesSideEffectsCount) <= 1 &&
+          !couldSkipSideEffects
+      }
 
       // At least one lambda.
       def isFaster =

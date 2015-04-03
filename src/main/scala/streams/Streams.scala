@@ -69,8 +69,15 @@ trait Streams
       components.map(_.lambdaCount).sum
     lazy val closureSideEffectss: List[List[SideEffect]] =
       components.flatMap(_.closureSideEffectss)
+
     lazy val subTrees: List[Tree] =
       components.flatMap(_.subTrees)
+
+    lazy val preservedSubTreess: List[List[Tree]] =
+      components.map(_.preservedSubTrees)
+
+    lazy val preservedSubTreesSideEffectss: List[List[SideEffect]] =
+      preservedSubTreess.map(_.flatMap(analyzeSideEffects))
 
     private[streams] def computeOutputNeedsBackwards(sinkNeeds: Set[TuploidPath]) =
       ops.scanRight(sinkNeeds)({

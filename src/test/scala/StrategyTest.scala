@@ -230,4 +230,44 @@ class StrategyTest {
     { import scalaxy.streams.strategy.foolish
       testMessages(src, msgs("Array.dropWhile -> Array")) }
   }
+
+  @Test
+  def testSubTreesSideEffectsInMultipleOps {
+
+    // 2 ops with unsafe side-effects
+    val src = """
+      object O { def s = "." }
+      Array(1, 2).map(_ * 2).map(_.toString.toInt).mkString(O.s)
+    """
+
+    { import scalaxy.streams.strategy.safer
+      testMessages(src, msgs("Array.map.map -> ArrayOps")) }
+
+    { import scalaxy.streams.strategy.safe
+      testMessages(src, msgs("Array.map.map -> ArrayOps")) }
+
+    { import scalaxy.streams.strategy.aggressive
+      testMessages(src, msgs("Array.map.map.mkString")
+        .copy(warnings = potentialSideEffectMsgs(
+          "scala.collection.immutable.StringLike.toInt",
+          "O.s"))) }
+
+    { import scalaxy.streams.strategy.foolish
+      testMessages(src, msgs("Array.map.map.mkString")
+        .copy(warnings = potentialSideEffectMsgs(
+          "scala.collection.immutable.StringLike.toInt",
+          "O.s"))) }
+  }
+
+  @Test
+  def testSubTreesSideEffectsInSingleOp {
+    // One op with 3 side-effects in preserved trees
+    val src = """
+      object O { def s = "." }
+      Array(1, 2).map(_ * 2).map(_ + 1).mkString(O.s, O.s, O.s)
+    """
+
+    { import scalaxy.streams.strategy.safer
+      testMessages(src, msgs("Array.map.map.mkString")) }
+  }
 }
