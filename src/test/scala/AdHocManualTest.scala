@@ -24,61 +24,22 @@ class AdHocManualTest
   // scalaxy.streams.flags.debug = true
   // scalaxy.streams.flags.quietWarnings = true
 
-  val fnRx = raw".*scala\.Function0\.apply.*"
-
-/*
-          def debug(title: String, t: Tree) = new Traverser {
-            override def traverse(tree: Tree) = {
-              for (s <- Option(tree.symbol); if s != NoSymbol && s.name.toString == "foo") {
-                println(s"""
-                $title
-                  symbol: ${s}
-                  owner: ${s.owner}
-                  ownerChain: ${ownerChain(s)}
-                """)
-              }
-              super.traverse(tree)
-            }
-          } traverse t
-*/
-
-
-  // @Test
+  @Test
   def testComp2 {
 
-    // val res = {
-    //   var value$macro$5: Nothing = null.asInstanceOf[Nothing];
-    //   var nonEmpty$macro$6: Boolean = false;
-    //   {
-    //     val item$macro$1: None.type = scala.None;
-    //     val nonEmpty$macro$2: Boolean = item$macro$1.ne(null);
-    //     if (nonEmpty$macro$2)
-    //       item$macro$1.foreach[Unit](((item$macro$4: Nothing) => {
-    //         value$macro$5 = item$macro$4;
-    //         nonEmpty$macro$6 = true
-    //       }))
-    //     else
-    //       ()
-    //   };
-    //   if (nonEmpty$macro$6)
-    //     scala.Some.apply[Nothing](value$macro$5)
-    //   else
-    //     scala.None
-    // }
-
-    // println("YAY")
-    // println("res: " + res)
-
     val src = """
-      val a = scala.scalajs.js.Array(1, 2, 3)
-      // val a = Array(1, 2, 3)
-      a.map(_ * 2)
+      val values = List("a", "b");
+      (
+        for (lhs <- values; rhs <- values) yield {
+          lhs + rhs
+        }
+      ).mkString(",")
     """
     assertPluginCompilesSnippetFine(src)
     
     {
       import scalaxy.streams.strategy.foolish
-      testMessages(src, msgs("List.flatten -> List", "Option.foreach"))
+      testMessages(src, msgs("List.flatMap(List.map).mkString"))
         // expectWarningRegexp = Some(List("there were \\d+ inliner warnings; re-run with -Yinline-warnings for details")))
     }
   }
@@ -238,4 +199,21 @@ class AdHocManualTest
       params = Array(2, 10, 100),
       minFaster = 30)
   }
+  
+/*
+  def debug(title: String, t: Tree) = new Traverser {
+    override def traverse(tree: Tree) = {
+      for (s <- Option(tree.symbol); if s != NoSymbol && s.name.toString == "foo") {
+        println(s"""
+        $title
+          symbol: ${s}
+          owner: ${s.owner}
+          ownerChain: ${ownerChain(s)}
+        """)
+      }
+      super.traverse(tree)
+    }
+  } traverse t
+*/
+
 }

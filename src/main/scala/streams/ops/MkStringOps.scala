@@ -85,15 +85,15 @@ private[streams] trait MkStringOps
 
         case (None, Some(_), None) =>
           StreamOutput(
-            prelude = List(builderDef),
-            beforeBody = List(sepDef, firstDef),
+            prelude = List(builderDef, firstDef),
+            beforeBody = List(sepDef),
             body = List(appendSep, appendInput),
             ending = List(result))
 
         case _ =>
           StreamOutput(
-            prelude = List(builderDef),
-            beforeBody = List(startDef, sepDef, endDef, firstDef, appendStart),
+            prelude = List(builderDef, firstDef),
+            beforeBody = List(startDef, sepDef, endDef, appendStart),
             body = List(appendSep, appendInput),
             afterBody = List(appendEnd),
             ending = List(result))

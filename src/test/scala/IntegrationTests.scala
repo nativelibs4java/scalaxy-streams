@@ -367,6 +367,16 @@ object IntegrationTests
     """List(1, 2, 3).mkString"""
       -> msgs("List.mkString"),
 
+    """
+      val values = List("a", "b");
+      (
+        for (lhs <- values; rhs <- values) yield {
+          lhs + rhs
+        }
+      ).mkString(",")
+    """
+      -> msgs("List.flatMap(List.map).mkString"),
+
     "Array(1, 2, 3).map(_ * 2).map(_ < 3)"
       -> msgs("Array.map.map -> Array"),
 
