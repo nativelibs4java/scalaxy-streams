@@ -487,15 +487,16 @@ And if anyone wants to tackle [SI-1338](https://issues.scala-lang.org/browse/SI-
 A project cannot depend on itself, even for the purpose of self-optimization.
 However...
 
-sbt 'set name := "scalaxy-streams-bootstrap"' \
+```
+sbt 'set name := "local-streams-bootstrap"' \
     'set version := "0-SNAPSHOT"' \
     clean publish-local
 
 SCALAXY_STREAMS_STRATEGY=aggressive \
 SCALAXY_STREAMS_VERY_VERBOSE=1 \
-sbt 'set addCompilerPlugin("com.nativelibs4java" %% "scalaxy-streams-bootstrap" % "0-SNAPSHOT")' \
+sbt 'set addCompilerPlugin("com.nativelibs4java" %% "local-streams-bootstrap" % "0-SNAPSHOT")' \
   clean compile test:compile
 
-sbt 'set addCompilerPlugin("com.nativelibs4java" %% "scalaxy-streams-bootstrap" % "0-SNAPSHOT")' \
+sbt 'set addCompilerPlugin("com.nativelibs4java" %% "local-streams-bootstrap" % "0-SNAPSHOT")' \
   test
-
+```
