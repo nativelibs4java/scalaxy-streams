@@ -14,16 +14,17 @@ object flags
   // TODO: optimize this (trait).
   private[streams] var verbose: Boolean =
     veryVerbose ||
-    System.getenv("SCALAXY_STREAMS_VERBOSE") == "1" ||
-    System.getProperty("scalaxy.streams.verbose") == "true"
+    System.getenv("SCALAXY_STREAMS_VERBOSE") != "0" &&
+    System.getProperty("scalaxy.streams.verbose") != "false"
 
   private[streams] var disabled: Boolean =
     System.getenv("SCALAXY_STREAMS_OPTIMIZE") == "0" ||
     System.getProperty("scalaxy.streams.optimize") == "false"
 
-  private[streams] var strategy: Option[String] =
+  private[streams] var strategy: Option[OptimizationStrategy] =
     Option(System.getenv("SCALAXY_STREAMS_STRATEGY"))
       .orElse(Option(System.getProperty("scalaxy.streams.strategy")))
+      .flatMap(scalaxy.streams.strategy.forName)
 
   /** For testing */
   private[streams] var quietWarnings = false

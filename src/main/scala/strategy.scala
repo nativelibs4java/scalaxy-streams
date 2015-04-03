@@ -91,5 +91,5 @@ object strategy {
     else Some(strategyByName(name))
 
   private[streams] lazy val global: OptimizationStrategy =
-    flags.strategy.flatMap(forName).getOrElse(default)
+    flags.strategy.getOrElse(default)
 }

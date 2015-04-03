@@ -20,7 +20,7 @@ private[streams] trait Optimizations
 
   def matchStrategyTree(inferImplicitValue: Type => Tree): OptimizationStrategy = 
   {
-    flags.strategy.flatMap(scalaxy.streams.strategy.forName).getOrElse {
+    flags.strategy.getOrElse {
       val optimizationStrategyValue: Tree = try {
         val tpe = OptimizationStrategyClass.asType.toType
         inferImplicitValue(tpe)
