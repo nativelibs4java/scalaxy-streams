@@ -8,18 +8,25 @@ private[streams] object Optimizations
       messageHeader +
       "Optimized stream " + streamDescription +
       " (strategy: " + strategy.name + ")"
+}
 
-  def matchStrategyTree(u: scala.reflect.api.Universe)
-                       (staticClass: String => u.TypeSymbol,
-                        inferImplicitValue: u.Type => u.Tree): OptimizationStrategy = 
+private[streams] trait Optimizations
+{
+  val global: scala.reflect.api.Universe
+  import global._
+
+  lazy val OptimizationStrategyClass =
+    rootMirror.staticClass("scalaxy.streams.OptimizationStrategy")
+
+  def matchStrategyTree(inferImplicitValue: Type => Tree): OptimizationStrategy = 
   {
-    import u._
-
     val optimizationStrategyValue: Tree = try {
-      val tpe = staticClass("scalaxy.streams.OptimizationStrategy").asType.toType
+      val tpe = OptimizationStrategyClass.asType.toType
       inferImplicitValue(tpe)
-    } catch { case ex: Throwable =>
-      EmptyTree
+    } catch {
+      case ex: Throwable =>
+        ex.printStackTrace()
+        EmptyTree
     }
 
     optimizationStrategyValue match {

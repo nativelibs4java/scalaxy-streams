@@ -24,7 +24,8 @@ private[streams] class StreamsComponent(
   val global: Global, runAfter: String = "typer")
     extends PluginComponent
     with StreamTransforms
-    with TypingTransformers {
+    with TypingTransformers
+    with Optimizations {
   import global._
   import definitions._
   import Flags._
@@ -58,8 +59,7 @@ private[streams] class StreamsComponent(
 
           // TODO: this is probably a very slow way to get the strategy :-S
           def getStrategy(pos: Position) =
-            Optimizations.matchStrategyTree(global)(
-              rootMirror.staticClass(_),
+            matchStrategyTree(
               tpe => analyzer.inferImplicit(
                 EmptyTree,
                 tpe,

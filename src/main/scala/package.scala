@@ -30,16 +30,19 @@ package streams
 
     private[streams] def optimize[A : c.WeakTypeTag](c: Context)(a: c.Expr[A], recurse: Boolean): c.Expr[A] = {
 
-      val strategy = Optimizations.matchStrategyTree(c.universe)(
-        c.mirror.staticClass(_),
-        tpe => c.inferImplicitValue(tpe, pos = a.tree.pos))
-
       if (flags.disabled) {
         a
       } else {
-        object Optimize extends StreamTransforms with WithMacroContext {
+        object Optimize extends StreamTransforms with WithMacroContext with Optimizations {
           override val context = c
           import global._
+
+          val strategy = matchStrategyTree(
+            tpe => c.inferImplicitValue(
+              tpe.asInstanceOf[c.Type],
+              pos = a.tree.pos.asInstanceOf[c.Position]
+            ).asInstanceOf[Tree]
+          )
 
           val result = try {
 
