@@ -9,7 +9,10 @@ private[streams] trait MkStringOps
   import global._
 
   object SomeMkStringOp extends StreamOpExtractor {
-    override def unapply(tree: Tree) = Option(tree) collect {
+    private[this] def isString(tree: Tree): Boolean =
+      Option(tree.tpe).exists(_ <:< typeOf[String])
+
+    override def unapply(tree: Tree) = Option(tree).filter(isString) collect {
       case q"$target.mkString" =>
         (target, MkStringOp(None, None, None))
 
@@ -85,18 +88,15 @@ private[streams] trait MkStringOps
 
         case (None, Some(_), None) =>
           StreamOutput(
-            prelude = List(builderDef, firstDef),
-            beforeBody = List(sepDef),
+            prelude = List(builderDef, firstDef, sepDef),
             body = List(appendSep, appendInput),
             ending = List(result))
 
         case _ =>
           StreamOutput(
-            prelude = List(builderDef, firstDef),
-            beforeBody = List(startDef, sepDef, endDef, appendStart),
+            prelude = List(builderDef, firstDef, startDef, sepDef, endDef, appendStart),
             body = List(appendSep, appendInput),
-            afterBody = List(appendEnd),
-            ending = List(result))
+            ending = List(appendEnd, result))
       }
     }
   }
