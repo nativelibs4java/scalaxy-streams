@@ -310,6 +310,7 @@ trait TuploidValues extends Utils with Tuploids
   }
 
   object TuploidValue {
+
     def extractSymbols(tree: Tree, alias: Option[Symbol] = None, isInsideCasePattern: Boolean = false): TuploidValue[Symbol] = {
       def sub(subs: List[Tree]): Map[Int, TuploidValue[Symbol]] =
         (subs.zipWithIndex.map {
@@ -340,7 +341,7 @@ trait TuploidValues extends Utils with Tuploids
         case UnApply(_, _) =>
           sys.error("Cannot handle " + tree)
 
-        case _ =>
+        case _ if !isInsideCasePattern =>
           ScalarValue(tree.tpe, value = Some(tree), alias = alias)
       }
     }

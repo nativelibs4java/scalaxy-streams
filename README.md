@@ -389,7 +389,7 @@ If you want to build / test / hack on this project:
         rm -fR build/quick
         # Build quick with the Scalaxy/Stream plugin:
         # (note: there are a couple of lingering problematic rewrites that must be skipped)
-        SCALAXY_STREAMS_SKIP=InlineExceptionHandlers.scala,Typers.scala,LambdaLift.scala \
+        SCALAXY_STREAMS_SKIP=LambdaLift.scala:searchIn \
           SCALAXY_STREAMS_VERY_VERBOSE=1 \
           ant "-Dscalac.args=-Xplugin-require:scalaxy-streams -Xplugin:${PWD}/scalaxy-streams_2.11.jar" build
 
