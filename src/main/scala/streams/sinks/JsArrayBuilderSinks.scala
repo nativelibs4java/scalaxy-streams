@@ -35,10 +35,8 @@ private[streams] trait JsArrayBuilderSinks
       val Block(List(
           arrayDecl,
           append), arrayRef) = typed(q"""
-        private[this] var $array = new ${JsWrappedArraySymOpt.get}[$componentTpe](
-          new ${JsArraySymOpt.get}[$componentTpe]()
-        );
-        $array.append(${input.vars.alias.get});
+        private[this] var $array = new ${JsArraySymOpt.get}[$componentTpe]();
+        $array.push(${input.vars.alias.get});
         $array.array
       """)
 

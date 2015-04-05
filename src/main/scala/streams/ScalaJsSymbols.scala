@@ -8,9 +8,6 @@ private[streams] trait ScalaJsSymbols extends OptionalSymbols
   private[streams] lazy val JsArraySymOpt =
     optionalStaticClass("scala.scalajs.js.Array")
 
-  private[streams] lazy val JsWrappedArraySymOpt =
-    optionalStaticClass("scala.scalajs.js.WrappedArray")
-
   private[streams] lazy val JsArrayOpsSymOpt =
     optionalStaticClass("scala.scalajs.js.ArrayOps")
 
