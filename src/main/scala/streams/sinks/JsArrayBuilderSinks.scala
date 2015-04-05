@@ -37,7 +37,7 @@ private[streams] trait JsArrayBuilderSinks
           append), arrayRef) = typed(q"""
         private[this] var $array = new ${JsArraySymOpt.get}[$componentTpe]();
         $array.push(${input.vars.alias.get});
-        $array.array
+        $array
       """)
 
       StreamOutput(
