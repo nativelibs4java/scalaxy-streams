@@ -131,6 +131,11 @@ If you're using `sbt` 0.13.0+, just put the following lines in `build.sbt`:
 
   // Dependency at compilation-time only (not at runtime).
   libraryDependencies += "com.nativelibs4java" %% "scalaxy-streams" % "0.3.4" % "provided"
+
+  // Like to live on the wild side? Try the snapshot out:
+  // libraryDependencies += "com.nativelibs4java" %% "scalaxy-streams" % "0.4-SNAPSHOT" % "provided"
+
+  // resolvers += Resolver.sonatypeRepo("snapshots")  
   ```
 
   And wrap some code with the `optimize` macro:
@@ -143,32 +148,21 @@ If you're using `sbt` 0.13.0+, just put the following lines in `build.sbt`:
   }
   ```
 
-  You'll need an extra repository resolver for the latest snapshot out:
-  ```scala
-  libraryDependencies += "com.nativelibs4java" %% "scalaxy-streams" % "0.4-SNAPSHOT" % "provided"
-
-  // Scalaxy snapshots are published on the Sonatype repository.
-  resolvers += Resolver.sonatypeRepo("snapshots")
-  ```
-
 * To use the compiler plugin (optimizes all of your code):
 
   ```scala
   scalaVersion := "2.11.6"
 
+  scalacOptions += "-Xplugin-require:scalaxy-streams"
+
   autoCompilerPlugins := true
 
   addCompilerPlugin("com.nativelibs4java" %% "scalaxy-streams" % "0.3.4")
 
-  scalacOptions += "-Xplugin-require:scalaxy-streams"
-  ```
+  // Like to live on the wild side? Try the snapshot out:
+  // addCompilerPlugin("com.nativelibs4java" %% "scalaxy-streams" % "0.4-SNAPSHOT")
 
-  You'll need an extra repository resolver for the latest snapshot out:
-  ```scala
-  addCompilerPlugin("com.nativelibs4java" %% "scalaxy-streams" % "0.4-SNAPSHOT")
-
-  // Scalaxy snapshots are published on the Sonatype repository.
-  resolvers += Resolver.sonatypeRepo("snapshots")
+  // resolvers += Resolver.sonatypeRepo("snapshots")
   ```
 
 And of course, if you're serious about performance you should add the following line to your `build.sbt` file:
