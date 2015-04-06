@@ -72,6 +72,9 @@ private[streams] trait FlattenOps
           index = None),
         nextOps)
 
+      // Note: need to attach any symbols in sub.body currently owned by currentOwner to the closure symbol.
+      ???
+
       sub.copy(body = List(withQuietWarnings(transform(typed(q"""
         ${vars.alias.get}.foreach(($itemValDef) => {
           ..${sub.body};
