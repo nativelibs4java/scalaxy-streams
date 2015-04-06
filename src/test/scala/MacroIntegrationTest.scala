@@ -25,6 +25,7 @@ object MacroIntegrationTest
   scalaxy.streams.flags.verbose = true
   scalaxy.streams.flags.veryVerbose = false
   scalaxy.streams.flags.quietWarnings = true
+  scalaxy.streams.flags.experimental = true
 
   implicit def strategy = scalaxy.streams.strategy.foolish
 

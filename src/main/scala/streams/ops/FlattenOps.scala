@@ -33,7 +33,9 @@ private[streams] trait FlattenOps
     }
 
     override def unapply(tree: Tree) = Option(tree) collect {
-      case q"$target.flatten[$tpt]($asTrav)" if isAKnownAsTraversable(asTrav, target.tpe) =>
+      case q"$target.flatten[$tpt]($asTrav)"
+          if isAKnownAsTraversable(asTrav, target.tpe) &&
+             flags.experimental =>
         (target, FlattenOp(tpt.tpe))
     }
   }
@@ -73,7 +75,7 @@ private[streams] trait FlattenOps
         nextOps)
 
       // Note: need to attach any symbols in sub.body currently owned by currentOwner to the closure symbol.
-      ???
+      assert(flags.experimental)
 
       sub.copy(body = List(withQuietWarnings(transform(typed(q"""
         ${vars.alias.get}.foreach(($itemValDef) => {

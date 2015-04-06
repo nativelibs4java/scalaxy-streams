@@ -548,23 +548,23 @@ object IntegrationTests
       -> msgs("List.flatMap -> List", "Option.getOrElse"),
       // TODO: -> msgs("List.flatMap(Option.getOrElse) -> List"),
 
-    // "Option(Some(2)).flatten"
-    //   -> msgs("Option.flatten -> Option", "Option.foreach"),
+    "Option(Some(2)).flatten"
+      -> msgs("Option.flatten -> Option", "Option.foreach"),
 
-    // "Option(Option(1)).flatten"
-    //   -> msgs("Option.flatten -> Option", "Option.foreach"),
+    "Option(Option(1)).flatten"
+      -> msgs("Option.flatten -> Option", "Option.foreach"),
 
-    // "Seq(Option(None).flatten)"
-    //   -> msgs(),
+    "Seq(Option(None).flatten)"
+      -> msgs(),
 
-    // "List(List(1, 2), List(3, 4)).flatten"
-    //   -> msgs("List.flatten -> List", "List.foreach"),
+    "List(List(1, 2), List(3, 4)).flatten"
+      -> msgs("List.flatten -> List", "List.foreach"),
 
-    // "List(List(1, 2), Seq(3, 4), Set(5, 6)).flatten"
-    //   -> msgs("List.flatten -> List"),
+    "List(List(1, 2), Seq(3, 4), Set(5, 6)).flatten"
+      -> msgs("List.flatten -> List"),
 
-    // "List(Option(1), None, Some(2)).flatten"
-    //   -> msgs("List.flatten -> List", "Option.foreach"),
+    "List(Option(1), None, Some(2)).flatten"
+      -> msgs("List.flatten -> List", "Option.foreach"),
 
     "var tot = 0; for (i <- 0 until 10; x = new AnyRef) { tot += i }; tot"
       -> msgs("Range.map.foreach"),

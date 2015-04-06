@@ -2,6 +2,10 @@ package scalaxy.streams
 
 object flags
 {
+  private[streams] var experimental: Boolean =
+    System.getenv("SCALAXY_STREAMS_EXPERIMENTAL") == "1" ||
+    System.getProperty("scalaxy.streams.experimental") == "true"
+
   private[streams] var debug: Boolean =
     System.getenv("SCALAXY_STREAMS_DEBUG") == "1" ||
     System.getProperty("scalaxy.streams.debug") == "true"

@@ -35,7 +35,7 @@ private[streams] trait StreamOps
       SomeExistsOp,
       SomeFilterOp,
       SomeFindOp,
-      // SomeFlattenOp,
+      SomeFlattenOp,
       SomeFlatMapOp,
       SomeForeachOp,
       SomeIsEmptyOp,
