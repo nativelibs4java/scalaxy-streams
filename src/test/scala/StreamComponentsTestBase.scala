@@ -159,7 +159,11 @@ trait StreamComponentsTestBase extends Utils with ConsoleReporters
     }
 
     val args = Array(sourceFile.toString)
-    pluginCompiler.get()(args)
+    try {
+      pluginCompiler.get()(args)
+    } finally {
+      sourceFile.delete()
+    }
   }
 
   case class Exceptional(exceptionString: String)
