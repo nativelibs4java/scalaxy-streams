@@ -25,7 +25,9 @@ private[streams] object SideEffectsWhitelists {
   private[this] lazy val whitelistedMethods = Set[String](
     "scala.Option.option2Iterable", // What about indirect .toString?
     "scala.Array.canBuildFrom",
-    "scala.collection.generic.GenericCompanion.apply"
+    "scala.collection.generic.GenericCompanion.apply",
+    "scala.collection.Iterator.zipWithIndex",
+    "scala.collection.LinearSeqLike.iterator"
   )
 
   private[this] lazy val whitelistedConstructors = Set[String](
