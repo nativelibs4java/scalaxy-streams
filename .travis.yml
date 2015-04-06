@@ -3,6 +3,8 @@ sudo: required
 language: scala
 scala:
 - 2.11.6
+git:
+  depth: 1
 cache:
   directories:
   - $HOME/.m2
