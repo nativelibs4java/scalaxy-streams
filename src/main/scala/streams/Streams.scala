@@ -13,8 +13,8 @@ trait Streams
         val res = (sink != InvalidSink) &&
           (!sink.isFinalOnly || indexFromEnd == 0)
 
-        if (flags.debug)
-          println("Unacceptable sink: " + sink + " for list of ops " + ops)
+        // if (flags.debug)
+        //   println("Unacceptable sink: " + sink + " for list of ops " + ops)
         res
       }
 
