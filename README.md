@@ -155,6 +155,10 @@ If you're using `sbt` 0.13.0+, just put the following lines in `build.sbt`:
 
   scalacOptions += "-Xplugin-require:scalaxy-streams"
 
+  scalacOptions in Test ~= (_ filterNot (_ == "-Xplugin-require:scalaxy-streams"))
+  
+  scalacOptions in Test += "-Xplugin-disable:scalaxy-streams"
+
   autoCompilerPlugins := true
 
   addCompilerPlugin("com.nativelibs4java" %% "scalaxy-streams" % "0.3.4")
@@ -170,6 +174,41 @@ And of course, if you're serious about performance you should add the following 
 scalacOptions += "-optimise -Yclosure-elim -Yinline"
 ```
 (also consider `-Ybackend:GenBCode`)
+
+## Cross-compiling with Sbt
+
+Scalaxy/Streams is not available for Scala 2.10.x, so some extra legwork is needed to use it in a cross-compiling setup:
+
+  ```scala
+  scalaVersion := "2.11.6"
+  
+  crossScalaVersions := Seq("2.10.5")
+  
+  resolvers += Resolver.sonatypeRepo("snapshots"),
+  
+  libraryDependencies <<= (scalaVersion, libraryDependencies) { (scalaVersion, libraryDependencies) =>
+    if (scalaVersion.matches("2\\.10\\..*")) {
+      libraryDependencies
+    } else {
+      // libraryDependencies :+ compilerPlugin("com.nativelibs4java" %% "scalaxy-streams" % "0.3.4")
+      libraryDependencies :+ compilerPlugin("com.nativelibs4java" %% "scalaxy-streams" % "0.4-SNAPSHOT")
+    }
+  }
+  
+  autoCompilerPlugins <<= scalaVersion(scalaVersion => !scalaVersion.matches("2\\.10\\..*"))
+  
+  scalacOptions <++= scalaVersion map {
+    case sv if !scalaVersion.matches("2\\.10\\..*") => Seq("-Xplugin-require:scalaxy-streams")
+    case _ => Seq[String]()
+  }
+  
+  scalacOptions in Test ~= (_ filterNot (_ == "-Xplugin-require:scalaxy-streams"))
+  
+  scalacOptions in Test <++= scalaVersion map {
+    case sv if !scalaVersion.matches("2\\.10\\..*") => Seq("-Xplugin-disable:scalaxy-streams")
+    case _ => Seq[String]()
+  }
+  ```
 
 ## Usage with Maven
 
