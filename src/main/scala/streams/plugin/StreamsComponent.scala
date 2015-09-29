@@ -32,8 +32,8 @@ private[streams] class StreamsComponent(
 
   override val phaseName = StreamsComponent.phaseName
 
-  override val runsRightAfter = Option(runAfter)
-  override val runsAfter = runsRightAfter.toList
+  override val runsRightAfter = None
+  override val runsAfter = List("typer")
   override val runsBefore = List("patmat")
 
   override def info(pos: Position, msg: String, force: Boolean) {

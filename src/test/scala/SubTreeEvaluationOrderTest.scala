@@ -16,8 +16,7 @@ class SubTreeEvaluationOrderTest(
     source: String,
     expectedMessages: CompilerMessages)
 {
-  scalaxy.streams.flags.verbose = true
-  scalaxy.streams.flags.veryVerbose = false
+  scalaxy.streams.flags.logLevel = LogLevel.Verbose
   scalaxy.streams.flags.quietWarnings = true
 
   import SubTreeEvaluationOrderTest._

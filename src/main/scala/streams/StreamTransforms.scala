@@ -12,6 +12,12 @@ trait StreamTransforms
 {
   import global._
 
+  private[this] def verboseInfo(tree: Tree, msg: => String) {
+    if (!flags.quiet) {
+      info(tree.pos, msg, force = flags.verbose)
+    }
+  }
+
   /**
    * Transforms a stream if it can, or returns None if it can't.
    *
@@ -26,20 +32,16 @@ trait StreamTransforms
   = tree match {
     case tree @ SomeStream(stream) if !hasKnownLimitationOrBug(stream) =>
       if (isBlacklisted(tree.pos, currentOwner)) {
-        if (flags.verbose) {
-          info(
-              tree.pos,
-              Optimizations.messageHeader + s"Skipped stream ${stream.describe()}",
-              force = flags.verbose)
-        }
+        verboseInfo(
+          tree,
+          Optimizations.messageHeader + s"Skipped stream ${stream.describe()}")
+
         None
       } else if (isWorthOptimizing(stream, strategy)) {
         // println(s"stream = $stream")
-
-        info(
-          tree.pos,
-          Optimizations.optimizedStreamMessage(stream.describe(), strategy),
-          force = flags.verbose)
+        verboseInfo(
+          tree,
+          Optimizations.optimizedStreamMessage(stream.describe(), strategy))
 
         try {
           val result: Tree = stream
@@ -51,10 +53,9 @@ trait StreamTransforms
             .compose(typecheck)
 
           if (flags.debug) {
-            info(
-              tree.pos,
-              Optimizations.messageHeader + s"Result for ${stream.describe()} (owner: ${currentOwner.fullName}):\n$result",
-              force = flags.verbose)
+            verboseInfo(
+              tree,
+              Optimizations.messageHeader + s"Result for ${stream.describe()} (owner: ${currentOwner.fullName}):\n$result")
           }
           Some(result)
 
@@ -65,10 +66,9 @@ trait StreamTransforms
         }
       } else {
         if (flags.veryVerbose && !stream.isDummy && !flags.quietWarnings) {
-          info(
-            tree.pos,
-            Optimizations.messageHeader + s"Stream ${stream.describe()} is not worth optimizing with strategy $strategy",
-            force = flags.verbose)
+          verboseInfo(
+            tree,
+            Optimizations.messageHeader + s"Stream ${stream.describe()} is not worth optimizing with strategy $strategy")
         }
         None
       }

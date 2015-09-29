@@ -1,29 +1,40 @@
 package scalaxy.streams
 
+private[streams] object LogLevel extends Enumeration {
+  type LogLevel = Value
+  val Quiet, Normal, Verbose, VeryVerbose, Debug = Value
+}
+
 object flags
 {
+  private[this] def isEnv(propName: String, envName: String, enabled: Boolean = true): Boolean = {
+    var env = System.getenv("SCALAXY_STREAMS_" + envName)
+    var prop = System.getProperty("scalaxy.streams." + propName)
+
+    env == (if (enabled) "1" else "0") ||
+    prop == enabled.toString()
+  }
+
+  import LogLevel._
+
+  private[streams] var logLevel: LogLevel = {
+    if (isEnv("debug", "DEBUG")) Debug
+    else if (isEnv("veryVerbose", "VERY_VERBOSE")) VeryVerbose
+    else if (isEnv("verbose", "VERBOSE")) Verbose
+    else if (isEnv("quiet", "QUIET")) Quiet
+    else Normal
+  }
+
+  private[streams] def verbose: Boolean = logLevel >= Verbose
+  private[streams] def veryVerbose: Boolean = logLevel >= VeryVerbose
+  private[streams] def debug: Boolean = logLevel >= Debug
+  private[streams] def quiet: Boolean = logLevel == Quiet
+
   private[streams] var experimental: Boolean =
-    System.getenv("SCALAXY_STREAMS_EXPERIMENTAL") == "1" ||
-    System.getProperty("scalaxy.streams.experimental") == "true"
-
-  private[streams] var debug: Boolean =
-    System.getenv("SCALAXY_STREAMS_DEBUG") == "1" ||
-    System.getProperty("scalaxy.streams.debug") == "true"
-
-  private[streams] var veryVerbose: Boolean =
-    debug ||
-    System.getenv("SCALAXY_STREAMS_VERY_VERBOSE") == "1" ||
-    System.getProperty("scalaxy.streams.veryVerbose") == "true"
-
-  // TODO: optimize this (trait).
-  private[streams] var verbose: Boolean =
-    veryVerbose ||
-    System.getenv("SCALAXY_STREAMS_VERBOSE") != "0" &&
-    System.getProperty("scalaxy.streams.verbose") != "false"
+    isEnv("experimental", "EXPERIMENTAL")
 
   private[streams] var disabled: Boolean =
-    System.getenv("SCALAXY_STREAMS_OPTIMIZE") == "0" ||
-    System.getProperty("scalaxy.streams.optimize") == "false"
+    isEnv("optimize", "OPTIMIZE", false)
 
   private[streams] var strategy: Option[OptimizationStrategy] =
     Option(System.getenv("SCALAXY_STREAMS_STRATEGY"))

@@ -15,8 +15,7 @@ object StrategyTest extends StreamComponentsTestBase with StreamTransforms
 class StrategyTest {
   import StrategyTest._
 
-  scalaxy.streams.flags.verbose = true
-  scalaxy.streams.flags.veryVerbose = false
+  scalaxy.streams.flags.logLevel = LogLevel.Verbose
   scalaxy.streams.flags.quietWarnings = false
 
   val newObjectRx = raw".*java\.lang\.Object\.<init>.*"

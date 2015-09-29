@@ -22,8 +22,7 @@ class MacroIntegrationTest(
 
 object MacroIntegrationTest
     extends StreamComponentsTestBase with StreamTransforms {
-  scalaxy.streams.flags.verbose = true
-  scalaxy.streams.flags.veryVerbose = false
+  scalaxy.streams.flags.logLevel = LogLevel.Verbose
   scalaxy.streams.flags.quietWarnings = true
   scalaxy.streams.flags.experimental = true
 
