@@ -1,5 +1,5 @@
 # Needed to avoid cryptic EOFException crashes in forked tests.
-sudo: required
+# sudo: required
 language: scala
 scala:
 - 2.11.6
