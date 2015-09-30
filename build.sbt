@@ -4,7 +4,7 @@ organization := "com.nativelibs4java"
 
 version := "0.4-SNAPSHOT"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
