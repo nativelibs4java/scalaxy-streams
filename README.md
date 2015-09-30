@@ -171,7 +171,7 @@ If you're using `sbt` 0.13.0+, just put the following lines in `build.sbt`:
 
 And of course, if you're serious about performance you should add the following line to your `build.sbt` file:
 ```scala
-scalacOptions += "-optimise -Yclosure-elim -Yinline"
+scalacOptions ++= Seq("-optimise", "-Yclosure-elim", "-Yinline")
 ```
 (also consider `-Ybackend:GenBCode`)
 
