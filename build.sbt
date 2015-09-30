@@ -22,6 +22,8 @@ testOptions in Global += Tests.Argument(TestFrameworks.JUnit, "-v")
 
 fork in Test := true
 
+javaOptions += "-Xmx1G"
+
 scalacOptions ++= Seq(
   "-encoding", "UTF-8",
   "-deprecation", "-feature", "-unchecked",
