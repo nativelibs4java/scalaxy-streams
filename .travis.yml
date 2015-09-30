@@ -15,8 +15,7 @@ env:
   - secure: DNSLyto/JVJTLMsBxrxK0C0B1/bdHZrDmKxr2ZTgEE6HFTZOLnAB39MD3RS6rnPotZcffdwraBTjYwH21Z8G0byquDyYR0khKdACsW77vy9ZBkNa6YUwlrUov9t2TfdU83QFvjoe8TCBmNqiQqkgB62YO7XS1wIe+pXeFbAqe/U=
 
 script:
-- export SBT_COMMANDS=test
-- [[ $TRAVIS_BRANCH == \"master\" ]] && export SBT_COMMANDS="$SBT_COMMANDS publish"
-- echo "SBT_COMMANDS = $SBT_COMMANDS"
-- sbt ++$TRAVIS_SCALA_VERSION 'set javaOptions += "-Djunit.parallel.threads=2"' 'set
-  parallelExecution in Test := false' $SBT_COMMANDS
+- "export SBT_COMMANDS=\"test\""
+- "[[ $TRAVIS_BRANCH == \"master\" ]] && export SBT_COMMANDS=\"$SBT_COMMANDS publish\""
+- "echo \"SBT_COMMANDS = $SBT_COMMANDS\""
+- sbt ++$TRAVIS_SCALA_VERSION 'set javaOptions += "-Djunit.parallel.threads=2"' $SBT_COMMANDS
