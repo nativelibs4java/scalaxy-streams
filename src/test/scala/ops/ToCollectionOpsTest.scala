@@ -25,9 +25,9 @@ class ToCollectionOpsTest extends StreamComponentsTestBase with StreamTransforms
 
   @Test
   def testToArray {
-    val SomeToCollectionOp(_, ToArrayOp) =
+    val SomeToCollectionOp(_, ToArrayOp(_)) =
       typecheck(q"Array(1).toArray")
-    val SomeReductionOp(SomeArrayOpsOp(SomeToCollectionOp(_, ToArrayOp), _), _) =
+    val SomeReductionOp(SomeArrayOpsOp(SomeToCollectionOp(_, ToArrayOp(_)), _), _) =
       typecheck(q"Array(1).toArray.sum")
   }
 

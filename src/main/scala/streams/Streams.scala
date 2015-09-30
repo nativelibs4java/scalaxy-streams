@@ -18,8 +18,28 @@ trait Streams
         res
       }
 
+      // var decorator: StreamSinkDecorator = null
+
+      // val sink = ops.reverse.toIterator.filter({
+      //   case d: StreamSinkDecorator if decorator == null =>
+      //     decorator = d
+      //     false
+      //   case _ =>
+      //     true
+      // }).zipWithIndex.map({
+      //   case (op, i) =>
+      //     (op.sinkOption, i)
+      // }).collectFirst({
+      //   case (Some(sink), i) if isAcceptableSink(sink, i) =>
+      //     sink
+      // })
+
+      // println(s"FOUND SINK $sink, DECORATOR $decorator\n\tops = $ops")
+      // sink.flatMap(s => Option(decorator).map(_.decorateSink(s)))
+      
       ops.reverse.toIterator.zipWithIndex.map({
-        case (op, i) => (op.sinkOption, i)
+        case (op, i) =>
+          (op.sinkOption, i)
       }).collectFirst({
         case (Some(sink), i) if isAcceptableSink(sink, i) =>
           sink
@@ -50,11 +70,9 @@ trait Streams
       sink: StreamSink,
       hasExplicitSink: Boolean)
   {
-    // println("FOUND STREAM: " + describe())
-    // println("FOUND STREAM: " + this)
-
     def isDummy: Boolean =
-      ops.isEmpty && (!hasExplicitSink || sink.isJustAWrapper)
+      (ops.isEmpty || ops.forall(_.isPassThrough)) &&
+      (!hasExplicitSink || sink.isJustAWrapper)
 
     private[this] val sourceAndOps = source :: ops
 
@@ -84,6 +102,9 @@ trait Streams
         case (op, refs) =>
           op.transmitOutputNeedsBackwards(refs)
       })
+
+    // println("FOUND STREAM: " + describe())
+    // println("FOUND STREAM: " + this)
 
     def emitStream(fresh: String => TermName,
                    transform: Tree => Tree,

@@ -19,23 +19,21 @@ class AdHocManualTest
   import global._
 
   scalaxy.streams.flags.logLevel = LogLevel.Verbose
+  // scalaxy.streams.flags.logLevel = LogLevel.VeryVerbose
+  // scalaxy.streams.flags.logLevel = LogLevel.Debug
+  // scalaxy.streams.flags.logLevel = LogLevel.QuietWarnings
 
   @Test
   def testComp2 {
 
     val src = """
-      val values = List("a", "b");
-      (
-        for (lhs <- values; rhs <- values) yield {
-          lhs + rhs
-        }
-      ).mkString(",")
+      Vector(1, 2, 3).map(_ * 2)
     """
     assertPluginCompilesSnippetFine(src)
     
     {
       import scalaxy.streams.strategy.foolish
-      testMessages(src, msgs("List.flatMap(List.map).mkString"))
+      testMessages(src, msgs("Vector.map -> Vector"))
         // expectWarningRegexp = Some(List("there were \\d+ inliner warnings; re-run with -Yinline-warnings for details")))
     }
   }

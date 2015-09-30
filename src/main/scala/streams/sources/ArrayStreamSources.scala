@@ -21,7 +21,7 @@ private[streams] trait ArrayStreamSources
   case class ArrayStreamSource(
       array: Tree,
       describe: Option[String] = Some("Array"),
-      sinkOption: Option[StreamSink] = Some(ArrayBuilderSink))
+      sinkOption: Option[StreamSink] = Some(ArrayBuilderSink(None)))
     extends StreamSource
   {
     override def lambdaCount = 0
@@ -38,7 +38,8 @@ private[streams] trait ArrayStreamSources
       val iVar = fresh("i")
       val itemVal = fresh("item")
 
-      val arrayTpe = findType(array).orNull
+      val tarray = if (Option(array.tpe).exists(_ != NoType)) array else typed(array)
+      val arrayTpe = findType(tarray).get//.map(TypeTree).getOrElse(tq"scala.Array[${input.vars.tpe}]")
       // getOrElse {
       //   sys.error(s"Failed to find type of $array")
       // }
@@ -50,12 +51,12 @@ private[streams] trait ArrayStreamSources
           iVarDef,
           itemValDef),
           TupleCreation(List(
-            lengthValRef, iVarRef, itemValRef))) = typed(q"""
-        private[this] val $arrayVal: $arrayTpe = ${transform(array)};
+            arrayValRef, lengthValRef, iVarRef, itemValRef))) = typed(q"""
+        private[this] val $arrayVal: $arrayTpe = ${transform(tarray)};
         private[this] val $lengthVal = $arrayVal.length;
         private[this] var $iVar = 0;
         private[this] val $itemVal = $arrayVal($iVar);
-        ($lengthVal, $iVar, $itemVal)
+        ($arrayVal, $lengthVal, $iVar, $itemVal)
       """)
 
       val TuploidPathsExtractionDecls(extractionCode, outputVars, coercionSuccessVarDefRef) =
@@ -69,18 +70,21 @@ private[streams] trait ArrayStreamSources
         input.copy(
           vars = outputVars,
           loopInterruptor = interruptor.loopInterruptor,
+          elementClassTag = Some(itemValRef.tpe -> q"""
+            scala.reflect.ClassTag[${itemValRef.tpe}](
+              scala.runtime.ScalaRunTime.arrayElementClass($arrayValRef.getClass))
+          """),
           outputSize = Some(lengthValRef)),
         nextOps,
         coercionSuccessVarDefRef._2)
 
       sub.copy(
+        prelude = List(arrayValDef, lengthValDef) ++ sub.prelude,
         beforeBody = Nil,
         body = List(typed(q"""
-          $arrayValDef;
-          $lengthValDef;
-          $iVarDef;
           ..${interruptor.defs}
           ..${sub.beforeBody};
+          $iVarDef;
           while (${interruptor.composeTest(q"$iVarRef < $lengthValRef")}) {
             $itemValDef;
             ..$extractionCode

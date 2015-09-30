@@ -75,7 +75,11 @@ private[streams] trait ZipWithIndexOps
           alias = Some(pairRef),
           couldBeNull = false)
 
-      val sub = emitSub(input.copy(vars = outputVars), nextOps)
+      val sub = emitSub(
+        input.copy(
+          vars = outputVars,
+          elementClassTag = None),
+        nextOps)
       sub.copy(
         // TODO pass source collection to canBuildFrom if it exists.
         beforeBody = sub.beforeBody :+ indexVarDef,

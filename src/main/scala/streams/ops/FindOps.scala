@@ -40,7 +40,11 @@ private[streams] trait FindOps
 
       var test = outputVars.alias.get
 
-      var sub = emitSub(input.copy(outputSize = None), nextOps)
+      var sub = emitSub(
+        input.copy(
+          outputSize = None,
+          elementClassTag = None),
+        nextOps)
       sub.copy(body = List(q"""
         ..$replacedStatements;
         if ($test) {

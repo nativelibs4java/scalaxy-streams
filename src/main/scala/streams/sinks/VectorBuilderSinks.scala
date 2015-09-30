@@ -17,9 +17,11 @@ private[streams] trait VectorBuilderSinks extends BuilderSinks {
     override def usesSizeHint = false
 
     // TODO build Vector of same size as source collection if it is known.
-    override def createBuilder(inputVars: TuploidValue[Tree], typed: Tree => Tree) = {
-      val module = rootMirror.staticModule("scala.collection.immutable.Vector")
-      typed(q"$module.newBuilder[${inputVars.tpe.dealias}]")
+    override def createBuilder(input: StreamInput) = {
+      import input.typed
+      typed(q"$VectorModule.newBuilder[${input.vars.tpe.dealias}]")
     }
+    
+    private[this] val VectorModule = rootMirror.staticModule("scala.collection.immutable.Vector")
   }
 }

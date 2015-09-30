@@ -136,6 +136,7 @@ private[streams] trait FlatMapOps
             input.copy(
               vars = ScalarValue(tpe, alias = Some(itemValRef)),
               outputSize = None,
+              elementClassTag = None,
               index = None),
             nextOps)
           sub.copy(body = List(typed(q"""

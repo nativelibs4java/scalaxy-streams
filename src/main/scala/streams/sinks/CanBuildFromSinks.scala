@@ -23,7 +23,8 @@ private[streams] trait CanBuildFromSinks
 
     override def usesSizeHint = true
 
-    override def createBuilder(inputVars: TuploidValue[Tree], typed: Tree => Tree) = {
+    override def createBuilder(input: StreamInput) = {
+      import input.typed
       typed(q"$canBuildFrom()")
     }
   }
@@ -38,7 +39,8 @@ private[streams] trait CanBuildFromSinks
         .filter(_ != NoSymbol)
         .map(s => (s.owner.fullName, s.name.toString)) match {
           case Some(("scala.Array", "canBuildFrom")) =>
-            ArrayBuilderSink
+            val q"${_}[${_}]($classTag)" = canBuildFrom
+            ArrayBuilderSink(Some(classTag))
 
           case Some(("scala.scalajs.js.Any", "canBuildFromArray")) =>
             JsArrayBuilderSink

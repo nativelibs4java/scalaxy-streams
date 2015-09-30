@@ -14,14 +14,15 @@ private[streams] trait ListBufferSinks extends BuilderSinks {
 
     override def subTrees = Nil
 
-    lazy val ListBufferModule =
+    private[this] val ListBufferModule =
       rootMirror.staticModule("scala.collection.mutable.ListBuffer")
     
     // lazy val ListModule =
     //   rootMirror.staticModule("scala.collection.immutable.List")
 
-    override def createBuilder(inputVars: TuploidValue[Tree], typed: Tree => Tree) = {
-      typed(q"$ListBufferModule[${inputVars.tpe}]()")
+    override def createBuilder(input: StreamInput) = {
+      import input.typed
+      typed(q"$ListBufferModule[${input.vars.tpe}]()")
       // typed(q"$ListModule.newBuilder[${inputVars.tpe}]")
     }
   }

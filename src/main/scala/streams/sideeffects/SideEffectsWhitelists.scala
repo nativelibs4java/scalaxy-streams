@@ -40,7 +40,9 @@ private[streams] object SideEffectsWhitelists {
    */
   private[this] lazy val whitelistedModuleReferences = Set[String](
     "scala.Array",
-    "scala.Predef"
+    "scala.Predef",
+    "scala.Vector",
+    "scala.package"
   )
 
   private[this] lazy val tupleSymbols: Set[String] = (2 until 22).map("scala.Tuple" + _).toSet

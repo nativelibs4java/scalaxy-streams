@@ -138,7 +138,8 @@ private[streams] trait OptionOps
           // The rest of the outer stream.
           val post = emitSub(
             input.copy(
-              vars = ScalarValue(componentTpe, alias = Some(valueVarRef))),
+              vars = ScalarValue(componentTpe, alias = Some(valueVarRef)),
+              elementClassTag = None),
             nextOps)
 
           // Compose the two expansions.

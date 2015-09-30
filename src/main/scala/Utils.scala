@@ -15,6 +15,17 @@ trait Utils {
     def unapply(from: From): Option[To]
   }
 
+  trait TypeBasedExtractor[R] {
+    def tpe: Type
+    def result(tree: Tree): R
+
+    def unapply(tree: Tree): Option[R] =
+      if (tree.tpe != null && tree.tpe <:< tpe)
+        Some(result(tree))
+      else
+        None
+  }
+
   // private[streams] 
   object S {
     def unapply(symbol: Symbol) = Option(symbol).map(_.name.toString)

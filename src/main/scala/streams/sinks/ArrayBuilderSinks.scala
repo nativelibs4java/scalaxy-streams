@@ -6,8 +6,14 @@ private[streams] trait ArrayBuilderSinks extends BuilderSinks {
   val global: scala.reflect.api.Universe
   import global._
 
-  case object ArrayBuilderSink extends BuilderSink
+  object ArrayBuilderSink {
+    private[streams] val ArrayBuilderModule =
+      rootMirror.staticModule("scala.collection.mutable.ArrayBuilder")
+  }
+  case class ArrayBuilderSink(classTagOption: Option[Tree]) extends BuilderSink
   {
+    import ArrayBuilderSink._
+
     override def describe = Some("Array")
 
     override def lambdaCount = 0
@@ -17,10 +23,18 @@ private[streams] trait ArrayBuilderSinks extends BuilderSinks {
     override def usesSizeHint = true
 
     // TODO build array of same size as source collection if it is known.
-    override def createBuilder(inputVars: TuploidValue[Tree], typed: Tree => Tree) = {
-      val builderModule =
-        rootMirror.staticModule("scala.collection.mutable.ArrayBuilder")
-      typed(q"$builderModule.make[${inputVars.tpe}]")
+    private[this] def createClassTag(input: StreamInput) = {
+      classTagOption.getOrElse {
+        val Some((_, classTag)) = input.elementClassTag
+        classTag
+      }
+    }
+
+    // TODO build array of same size as source collection if it is known.
+    override def createBuilder(input: StreamInput) = {
+      import input.typed
+      val classTag = createClassTag(input)
+      typed(q"$ArrayBuilderModule.make[${input.vars.tpe}]()($classTag)")
     }
 
     override def emit(input: StreamInput, outputNeeds: OutputNeeds, nextOps: OpsAndOutputNeeds): StreamOutput =
@@ -40,6 +54,19 @@ private[streams] trait ArrayBuilderSinks extends BuilderSinks {
 
           val componentTpe = normalize(input.vars.tpe)
 
+          val arrayAssignment =
+            if (componentTpe.typeSymbol.asType.isAbstract) {
+              val classTag = createClassTag(input)
+              q"""
+                $array = {
+                  implicit val ${fresh("classTag")}: ${classTag.tpe} = $classTag
+                  new Array[$componentTpe]($outputSize)
+                }
+              """
+            } else {
+              q"$array = new Array[$componentTpe]($outputSize)"
+            }
+
           val Block(List(
               arrayDecl,
               arrayCreation,
@@ -47,7 +74,7 @@ private[streams] trait ArrayBuilderSinks extends BuilderSinks {
               append,
               incr), arrayRef) = typed(q"""
             private[this] var $array: Array[$componentTpe] = null;
-            $array = new Array[$componentTpe]($outputSize);
+            $arrayAssignment;
             private[this] var $index = 0;
             $array($index) = ${input.vars.alias.get};
             $index += 1;

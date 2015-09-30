@@ -31,12 +31,22 @@ private[streams] trait StreamResults extends TuploidValues {
   val NoStreamOutput = StreamOutput()
 
   case class StreamInput(
-    vars: TuploidValue[Tree],
-    outputSize: Option[Tree] = None,
-    index: Option[Tree] = None,
-    loopInterruptor: Option[Tree] = None,
-    fresh: String => TermName,
-    transform: Tree => Tree,
-    currentOwner: Symbol,
-    typed: Tree => Tree)
+      vars: TuploidValue[Tree],
+      outputSize: Option[Tree] = None,
+      /** Type of the element (for verification purposes) and a tree that gives its ClassTag */
+      elementClassTag: Option[(Type, Tree)] = None,
+      index: Option[Tree] = None,
+      loopInterruptor: Option[Tree] = None,
+      fresh: String => TermName,
+      transform: Tree => Tree,
+      currentOwner: Symbol,
+      typed: Tree => Tree)
+  {
+    for ((elementTpe, classTag) <- elementClassTag) {
+      val componentTpe = vars.tpe.dealias
+      if (!(elementTpe =:= componentTpe)) {
+        sys.error(s"Internal error: mismatching element types from classTag ($elementTpe) and stream ($componentTpe)")
+      }
+    }
+  }
 }

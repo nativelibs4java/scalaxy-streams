@@ -34,7 +34,7 @@ private[streams] trait MapOps
       val (replacedStatements, outputVars) =
         transformationClosure.replaceClosureBody(input, outputNeeds)
 
-      val sub = emitSub(input.copy(vars = outputVars), nextOps)
+      val sub = emitSub(input.copy(vars = outputVars, elementClassTag = None), nextOps)
       sub.copy(body = replacedStatements ++ sub.body)
     }
   }

@@ -11,7 +11,7 @@ private[streams] trait BuilderSinks extends StreamComponents {
 
     def usesSizeHint: Boolean
 
-    def createBuilder(inputVars: TuploidValue[Tree], typed: Tree => Tree): Tree
+    def createBuilder(input: StreamInput): Tree
 
     override def emit(input: StreamInput, outputNeeds: OutputNeeds, nextOps: OpsAndOutputNeeds): StreamOutput =
     {
@@ -28,7 +28,7 @@ private[streams] trait BuilderSinks extends StreamComponents {
           builderDef,
           sizeHint,
           builderAdd), result) = typed(q"""
-        private[this] val $builder = ${createBuilder(input.vars, typed)};
+        private[this] val $builder = ${createBuilder(input)};
         ${sizeHintOpt.getOrElse(dummyStatement(fresh))};
         $builder += ${input.vars.alias.get};
         $builder.result()

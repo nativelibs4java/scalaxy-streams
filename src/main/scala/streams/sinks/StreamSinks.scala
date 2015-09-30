@@ -19,8 +19,8 @@ private[streams] trait StreamSinks
       case q"$target.toIterator" =>
         (target, IteratorSink)
 
-      case q"$target.toArray[${_}](${_})" =>
-        (target, ArrayBuilderSink)
+      case q"$target.toArray[${_}]($classTag)" =>
+        (target, ArrayBuilderSink(Some(classTag)))
 
       case q"$target.toSet[${_}]" =>
         (target, SetBuilderSink)

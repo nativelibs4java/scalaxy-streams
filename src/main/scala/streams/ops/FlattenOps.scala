@@ -71,6 +71,7 @@ private[streams] trait FlattenOps
         input.copy(
           vars = ScalarValue(tpe, alias = Some(itemValRef)),
           outputSize = None,
+          elementClassTag = None,
           index = None),
         nextOps)
 

@@ -16,10 +16,12 @@ private[streams] trait SetBuilderSinks extends BuilderSinks {
 
     override def isFinalOnly = true
 
-    override def createBuilder(inputVars: TuploidValue[Tree], typed: Tree => Tree) = {
-      val setModule =
-        rootMirror.staticModule("scala.collection.immutable.Set")
-      typed(q"$setModule.canBuildFrom[${inputVars.tpe}]()")
+    override def createBuilder(input: StreamInput) = {
+      import input.typed
+      typed(q"$ImmutableSetModule.canBuildFrom[${input.vars.tpe}]()")
     }
+
+    private[this] val ImmutableSetModule =
+      rootMirror.staticModule("scala.collection.immutable.Set")
   }
 }

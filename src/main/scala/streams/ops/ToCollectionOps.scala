@@ -21,8 +21,8 @@ private[streams] trait ToCollectionOps
       case q"$target.toVector" =>
         (target, ToVectorOp)
 
-      case q"$target.toArray[${_}](${_})" =>
-        (target, ToArrayOp)
+      case q"$target.toArray[${_}]($classTag)" =>
+        (target, ToArrayOp(classTag))
     }
   }
 
@@ -34,7 +34,7 @@ private[streams] trait ToCollectionOps
 
   case object ToListOp extends ToCollectionOp("toList", ListBufferSink)
 
-  case object ToArrayOp extends ToCollectionOp("toArray", ArrayBuilderSink)
+  case class ToArrayOp(classTag: Tree) extends ToCollectionOp("toArray", ArrayBuilderSink(Some(classTag)))
 
   case object ToVectorOp extends ToCollectionOp("toVector", VectorBuilderSink)
 

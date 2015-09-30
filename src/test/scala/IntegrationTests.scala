@@ -36,6 +36,12 @@ object IntegrationTests
     // (0 until n).dropWhile(x => x < n / 2).toSeq
     // (0 until n).filter(v => (v % 2) == 0).map(_ * 2).toArray.toSeq
 
+    "def test[T](a: Array[T]) = a.map(x => (x, x)); test(Array(1, 2)).toSeq"
+      -> msgs("Array.map -> Array"),
+
+    "def test[T](a: Array[T]) = a.filter(_ != null); test(Array(1, 2)).toSeq"
+      -> msgs("Array.filter -> Array"),
+
     """
       List(1, 2, 3, 4)
         .toIterator

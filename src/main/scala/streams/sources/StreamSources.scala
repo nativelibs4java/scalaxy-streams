@@ -1,13 +1,14 @@
 package scalaxy.streams
 
 private[streams] trait StreamSources
-  extends InlineRangeStreamSources
+  extends ArrayStreamSources
+  with InlineRangeStreamSources
   with InlineSeqStreamSources
   with IteratorStreamSources
+  with JsArrayStreamSources
   with ListStreamSources
   with OptionStreamSources
-  with ArrayStreamSources
-  with JsArrayStreamSources
+  with VectorStreamSources
 {
   val global: scala.reflect.api.Universe
   import global._
@@ -21,6 +22,7 @@ private[streams] trait StreamSources
       case SomeOptionStreamSource(source)      => source
       case SomeArrayStreamSource(source)       => source
       case SomeJsArrayStreamSource(source)     => source
+      case SomeVectorStreamSource(source)      => source
     }
   }
 }
