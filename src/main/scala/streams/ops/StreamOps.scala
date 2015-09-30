@@ -53,13 +53,19 @@ private[streams] trait StreamOps
     object ExtractOps {
       def unapply(extractorAndTree: (StreamOpExtractor, Tree)): Option[(Tree, List[StreamOp])] = {
         val (extractor, tree) = extractorAndTree
-        extractor.unapply(tree) collect {
-          case (SomeStreamOps(src, ops), op)
-              if !ops.lastOption.exists(_.sinkOption == Some(ScalarSink)) =>
-            (src, ops :+ op)
+        extractor.unapply(tree) match {
+          case e @ ExtractedStreamOp(target, op) if !e.isEmpty =>
+            target match {
+              case SomeStreamOps(src, ops)
+                  if !ops.lastOption.exists(_.sinkOption == Some(ScalarSink)) =>
+                Some(src, ops :+ op)
 
-          case (src, op) =>
-            (src, List(op))
+              case src =>
+                Some(src, List(op))
+            }
+
+          case _ =>
+            None
         }
       }
     }

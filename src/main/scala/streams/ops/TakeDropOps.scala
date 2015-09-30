@@ -11,12 +11,15 @@ private[streams] trait TakeDropOps
 
   object SomeTakeDropOp extends StreamOpExtractor {
 
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.take($n)" =>
-        (target, TakeOp(n))
+        ExtractedStreamOp(target, TakeOp(n))
 
       case q"$target.drop($n)" =>
-        (target, DropOp(n))
+        ExtractedStreamOp(target, DropOp(n))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

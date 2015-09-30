@@ -9,9 +9,12 @@ private[streams] trait FindOps
   import global._
 
   object SomeFindOp extends StreamOpExtractor {
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.find(${Closure(closure)})" =>
-        (target, FindOp(closure))
+        ExtractedStreamOp(target, FindOp(closure))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
   case class FindOp(closure: Function)

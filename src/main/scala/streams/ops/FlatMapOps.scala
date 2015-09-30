@@ -12,13 +12,16 @@ private[streams] trait FlatMapOps
   val SomeStream: Extractor[Tree, Stream]
 
   object SomeFlatMapOp extends StreamOpExtractor {
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.flatMap[$tpt, ${_}](${Closure(closure)})($cbf)" =>
-        (target, FlatMapOp(tpt.tpe, closure, Some(cbf)))
+        ExtractedStreamOp(target, FlatMapOp(tpt.tpe, closure, Some(cbf)))
 
       // Option.flatMap doesn't take a CanBuildFrom.
       case q"$target.flatMap[$tpt](${Closure(closure)})" =>
-        (target, FlatMapOp(tpt.tpe, closure, None))
+        ExtractedStreamOp(target, FlatMapOp(tpt.tpe, closure, None))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

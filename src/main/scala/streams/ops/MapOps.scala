@@ -8,13 +8,16 @@ private[streams] trait MapOps
   import global._
 
   object SomeMapOp extends StreamOpExtractor {
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.map[${_}, ${_}](${Closure(closure)})($canBuildFrom)" =>
-        (target, MapOp(closure, canBuildFrom = Some(canBuildFrom)))
+        ExtractedStreamOp(target, MapOp(closure, canBuildFrom = Some(canBuildFrom)))
 
       // Option.map and Iterator.map don't take a CanBuildFrom.
       case q"$target.map[${_}](${Closure(closure)})" =>
-        (target, MapOp(closure, canBuildFrom = None))
+        ExtractedStreamOp(target, MapOp(closure, canBuildFrom = None))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

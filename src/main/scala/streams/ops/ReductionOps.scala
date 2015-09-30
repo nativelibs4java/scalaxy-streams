@@ -19,15 +19,18 @@ private[streams] trait ReductionOps
       isPrimitiveNumeric(normalize(tpe)) &&
       Option(numeric.symbol).exists(_.owner.fullName == NumericModule.fullName)
 
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.sum[${tpt}]($numeric)" if isStandardNumeric(tree.tpe, numeric) =>
-        (target, SumOp(tpt.tpe))
+        ExtractedStreamOp(target, SumOp(tpt.tpe))
 
       case q"$target.product[${tpt}]($numeric)" if isStandardNumeric(tree.tpe, numeric) =>
-        (target, ProductOp(tpt.tpe))
+        ExtractedStreamOp(target, ProductOp(tpt.tpe))
 
       case q"$target.reduceLeft[${tpt}](${Closure2(closure)})" =>
-        (target, ReduceLeftOp(tpt.tpe, closure))
+        ExtractedStreamOp(target, ReduceLeftOp(tpt.tpe, closure))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

@@ -7,15 +7,18 @@ private[streams] trait IsEmptyOps
   import global._
 
   object SomeIsEmptyOp extends StreamOpExtractor {
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.isEmpty" =>
-        (target, IsEmptyOp("isEmpty", true))
+        ExtractedStreamOp(target, IsEmptyOp("isEmpty", true))
 
       case q"$target.isDefined" =>
-        (target, IsEmptyOp("isDefined", false))
+        ExtractedStreamOp(target, IsEmptyOp("isDefined", false))
 
       case q"$target.nonEmpty" =>
-        (target, IsEmptyOp("nonEmpty", false))
+        ExtractedStreamOp(target, IsEmptyOp("nonEmpty", false))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

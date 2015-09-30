@@ -130,7 +130,18 @@ private[streams] trait StreamComponents
   val SomeStreamOps: Extractor[Tree, (Tree, List[StreamOp])]
   val SomeStreamSink: Extractor[Tree, (Tree, StreamSink)]
 
-  type StreamOpExtractor = Extractor[Tree, (Tree, StreamOp)]
+  case class ExtractedStreamOp(target: Tree, op: StreamOp) {
+    def isEmpty: Boolean = target == null && op == null
+    def get: ExtractedStreamOp = this
+    def _1: Tree = target
+    def _2: StreamOp = op
+  }
+
+  lazy val NoExtractedStreamOp = ExtractedStreamOp(null, null)
+
+  trait StreamOpExtractor {
+    def unapply(tree: Tree): ExtractedStreamOp
+  }
 
   private[streams] def printOps(ops: List[StreamOp]) {
     println(s"ops = " + ops.map(_.getClass.getSimpleName).mkString("\n\t"))

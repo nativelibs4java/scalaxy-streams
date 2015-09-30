@@ -32,11 +32,14 @@ private[streams] trait FlattenOps
         false
     }
 
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.flatten[$tpt]($asTrav)"
           if isAKnownAsTraversable(asTrav, target.tpe) &&
              flags.experimental =>
-        (target, FlattenOp(tpt.tpe))
+        ExtractedStreamOp(target, FlattenOp(tpt.tpe))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

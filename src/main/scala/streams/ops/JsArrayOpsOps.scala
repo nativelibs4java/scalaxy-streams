@@ -9,21 +9,36 @@ private[streams] trait JsArrayOpsOps
 
   object SomeJsArrayOp {
     def isJsArrayOpType(tpe: Type): Boolean =
-      Option(tpe).map(_.typeSymbol).exists(JsArrayOpsSymOpt.contains(_))
+      tpe != null && JsArrayOpsSymOpt.contains(tpe.typeSymbol)
 
-    def unapply(tree: Tree): Option[Tree] =
-      Option(tree).filter(_ => isJsArrayOpType(tree.tpe)) collect {
-      case Apply(TypeApply(Select(JsAny(), N("jsArrayOps")), List(_)), List(array)) =>
-        array
+    def unapply(tree: Tree): Tree = {
+      val tpe = tree.tpe
+      if (isJsArrayOpType(tree.tpe)) {
+        tree match {
+          case Apply(TypeApply(Select(JsAny(), N("jsArrayOps")), List(_)), List(array)) =>
+            array
 
-      case Apply(Select(New(_), termNames.CONSTRUCTOR), List(array)) =>
-        array
+          case Apply(Select(New(_), termNames.CONSTRUCTOR), List(array)) =>
+            array
+
+          case _ =>
+            EmptyTree
+        }
+      } else {
+        EmptyTree
+      }
     }
   }
 
   object SomeJsArrayOpsOp extends StreamOpExtractor {
-    override def unapply(tree: Tree): Option[(Tree, StreamOp)] =
-      SomeJsArrayOp.unapply(tree).map(array => (array, JsArrayOpsOp))
+    override def unapply(tree: Tree): ExtractedStreamOp =
+      SomeJsArrayOp.unapply(tree) match {
+        case EmptyTree =>
+          NoExtractedStreamOp
+
+        case array =>
+          ExtractedStreamOp(array, JsArrayOpsOp)
+      }
   }
 
   case object JsArrayOpsOp extends PassThroughStreamOp {

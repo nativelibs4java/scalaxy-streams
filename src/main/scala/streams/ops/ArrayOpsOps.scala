@@ -8,7 +8,7 @@ private[streams] trait ArrayOpsOps
   import global._
 
   object SomeArrayOp {
-    def unapply(tree: Tree): Option[Tree] = Option(tree) collect {
+    def unapply(tree: Tree): Tree = tree match {
       case Apply(
           Select(Predef(), N(
             "intArrayOps" |
@@ -26,12 +26,21 @@ private[streams] trait ArrayOpsOps
             List(_)),
           List(array)) =>
         array
+
+      case _ =>
+        EmptyTree
     }
   }
 
   object SomeArrayOpsOp extends StreamOpExtractor {
-    override def unapply(tree: Tree): Option[(Tree, StreamOp)] =
-      SomeArrayOp.unapply(tree).map(array => (array, ArrayOpsOp))
+    override def unapply(tree: Tree) =
+      SomeArrayOp.unapply(tree) match {
+        case EmptyTree =>
+          NoExtractedStreamOp
+
+        case array =>
+          ExtractedStreamOp(array, ArrayOpsOp)
+      }
   }
 
   case object ArrayOpsOp extends PassThroughStreamOp {

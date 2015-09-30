@@ -9,18 +9,27 @@ private[streams] trait MkStringOps
   import global._
 
   object SomeMkStringOp extends StreamOpExtractor {
-    private[this] def isString(tree: Tree): Boolean =
-      Option(tree.tpe).exists(_ <:< typeOf[String])
+    private[this] def isString(tpe: Type): Boolean =
+      tpe != null && tpe <:< typeOf[String]
 
-    override def unapply(tree: Tree) = Option(tree).filter(isString) collect {
-      case q"$target.mkString" =>
-        (target, MkStringOp(None, None, None))
+    override def unapply(tree: Tree) = {
+      if (isString(tree.tpe)) {
+        tree match {
+          case q"$target.mkString" =>
+            ExtractedStreamOp(target, MkStringOp(None, None, None))
 
-      case q"$target.mkString($sep)" =>
-        (target, MkStringOp(None, Some(sep), None))
+          case q"$target.mkString($sep)" =>
+            ExtractedStreamOp(target, MkStringOp(None, Some(sep), None))
 
-      case q"$target.mkString($start, $sep, $end)" =>
-        (target, MkStringOp(Some(start), Some(sep), Some(end)))
+          case q"$target.mkString($start, $sep, $end)" =>
+            ExtractedStreamOp(target, MkStringOp(Some(start), Some(sep), Some(end)))
+          
+          case _ =>
+            NoExtractedStreamOp
+        }
+      } else {
+        NoExtractedStreamOp
+      }
     }
   }
 
