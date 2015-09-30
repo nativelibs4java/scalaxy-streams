@@ -18,11 +18,7 @@ class AdHocManualTest
 {
   import global._
 
-  scalaxy.streams.flags.verbose = true
-
-  // scalaxy.streams.flags.veryVerbose = true
-  // scalaxy.streams.flags.debug = true
-  // scalaxy.streams.flags.quietWarnings = true
+  scalaxy.streams.flags.logLevel = LogLevel.Verbose
 
   @Test
   def testComp2 {
