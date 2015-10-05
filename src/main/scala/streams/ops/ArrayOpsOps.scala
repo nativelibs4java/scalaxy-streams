@@ -18,10 +18,20 @@ private[streams] trait ArrayOpsOps
             "charArrayOps" |
             "booleanArrayOps" |
             "floatArrayOps" |
-            "doubleArrayOps")) |
+            "doubleArrayOps" |
+            // These now have a _ prefix in 2.12.0-M2:
+            "_intArrayOps" |
+            "_longArrayOps" |
+            "_byteArrayOps" |
+            "_shortArrayOps" |
+            "_charArrayOps" |
+            "_booleanArrayOps" |
+            "_floatArrayOps" |
+            "_doubleArrayOps")) |
           TypeApply(
             Select(Predef(), N(
               "refArrayOps" |
+              "_refArrayOps" |
               "genericArrayOps")),
             List(_)),
           List(array)) =>
