@@ -79,9 +79,10 @@ private[streams] trait ArrayStreamSources
         coercionSuccessVarDefRef._2)
 
       sub.copy(
-        prelude = List(arrayValDef, lengthValDef) ++ sub.prelude,
         beforeBody = Nil,
         body = List(typed(q"""
+          $arrayValDef;
+          $lengthValDef;
           ..${interruptor.defs}
           ..${sub.beforeBody};
           $iVarDef;
