@@ -68,6 +68,7 @@ private[streams] trait StreamComponents
     def canInterruptLoop: Boolean = false
     def canAlterSize: Boolean
     def isPassThrough = false
+    def isSink = false
 
     def transmitOutputNeedsBackwards(paths: Set[TuploidPath]): Set[TuploidPath]
   }

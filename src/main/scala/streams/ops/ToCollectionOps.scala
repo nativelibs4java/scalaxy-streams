@@ -29,6 +29,7 @@ private[streams] trait ToCollectionOps
   class ToCollectionOp(name: String, sink: StreamSink) extends PassThroughStreamOp {
     override def describe = Some(name)
     override def sinkOption = Some(sink)
+    override def isSink = true
     override def canAlterSize = false
   }
 
