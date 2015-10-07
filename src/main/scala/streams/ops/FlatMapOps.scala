@@ -86,6 +86,11 @@ private[streams] trait FlatMapOps
 
     override val sinkOption = canBuildFrom.map(CanBuildFromSink(_))
 
+    lazy val elementClassTag: Option[Tree] = sinkOption collect {
+      case ArrayBuilderSink(Some(classTag)) =>
+        classTag
+    }
+
     override def emit(input: StreamInput,
                       outputNeeds: OutputNeeds,
                       nextOps: OpsAndOutputNeeds): StreamOutput =
@@ -136,7 +141,7 @@ private[streams] trait FlatMapOps
             input.copy(
               vars = ScalarValue(tpe, alias = Some(itemValRef)),
               outputSize = None,
-              elementClassTag = None,
+              elementClassTag = elementClassTag.map(itemValRef.tpe -> _),
               index = None),
             nextOps)
           sub.copy(body = List(typed(q"""

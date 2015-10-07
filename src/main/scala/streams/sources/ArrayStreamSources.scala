@@ -70,10 +70,11 @@ private[streams] trait ArrayStreamSources
         input.copy(
           vars = outputVars,
           loopInterruptor = interruptor.loopInterruptor,
-          elementClassTag = Some(itemValRef.tpe -> q"""
-            scala.reflect.ClassTag[${itemValRef.tpe}](
-              scala.runtime.ScalaRunTime.arrayElementClass($arrayValRef.getClass))
-          """),
+          elementClassTag = None,
+          // elementClassTag = Some(itemValRef.tpe -> q"""
+          //   scala.reflect.ClassTag[${itemValRef.tpe}](
+          //     scala.runtime.ScalaRunTime.arrayElementClass($arrayValRef.getClass))
+          // """),
           outputSize = Some(lengthValRef)),
         nextOps,
         coercionSuccessVarDefRef._2)

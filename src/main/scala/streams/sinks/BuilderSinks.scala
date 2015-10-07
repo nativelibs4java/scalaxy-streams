@@ -24,6 +24,7 @@ private[streams] trait BuilderSinks extends StreamComponents {
 
       // println("input.vars.alias.get = " + input.vars.alias.get + ": " + input.vars.tpe)
       val sizeHintOpt = input.outputSize.map(s => q"$builder.sizeHint($s)")
+
       val Block(List(
           builderDef,
           sizeHint,
@@ -36,7 +37,7 @@ private[streams] trait BuilderSinks extends StreamComponents {
 
       StreamOutput(
         prelude = List(builderDef),
-        beforeBody = input.outputSize.filter(_ => usesSizeHint).map(_ => sizeHint).toList,
+        beforeBody = if (usesSizeHint) List(sizeHint) else Nil,
         body = List(builderAdd),
         ending = List(result))
     }
