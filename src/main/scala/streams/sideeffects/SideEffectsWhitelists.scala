@@ -26,6 +26,7 @@ private[streams] object SideEffectsWhitelists {
     "scala.Option.option2Iterable", // What about indirect .toString?
     "scala.Array.canBuildFrom",
     "scala.collection.generic.GenericCompanion.apply",
+    "scala.collection.Iterator.apply",
     "scala.collection.Iterator.zipWithIndex",
     "scala.collection.LinearSeqLike.iterator"
   )
@@ -42,6 +43,7 @@ private[streams] object SideEffectsWhitelists {
     "scala.Array",
     "scala.Predef",
     "scala.Vector",
+    "scala.Iterator",
     "scala.package"
   )
 
