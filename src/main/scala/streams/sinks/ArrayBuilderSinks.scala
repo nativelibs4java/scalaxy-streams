@@ -23,10 +23,17 @@ private[streams] trait ArrayBuilderSinks extends BuilderSinks {
     override def usesSizeHint = true
 
     // TODO build array of same size as source collection if it is known.
-    private[this] def createClassTag(input: StreamInput) = {
+    private[this] def createClassTag(input: StreamInput): Tree = {
       classTagOption.getOrElse {
-        val Some((_, classTag)) = input.elementClassTag
-        classTag
+        val tpe = input.vars.tpe
+        input.elementClassTag match {
+          case Some((elementTpe, classTag)) =>
+            assert(tpe == elementTpe)
+            classTag
+          case _ =>
+            getClassTagForType(tpe).getOrElse(sys.error(
+              s"Failed to get class tag for $tpe"))
+        }
       }
     }
 
@@ -55,7 +62,7 @@ private[streams] trait ArrayBuilderSinks extends BuilderSinks {
           val componentTpe = normalize(input.vars.tpe)
 
           val arrayAssignment =
-            if (componentTpe.typeSymbol.asType.isAbstract) {
+            if (isAbstractType(componentTpe)) {
               val classTag = createClassTag(input)
               q"""
                 $array = {

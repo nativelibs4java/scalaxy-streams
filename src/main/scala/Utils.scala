@@ -121,6 +121,41 @@ trait Utils {
       .getOrElse(q"null.asInstanceOf[$tpe]")
   }
 
+  // private[this] lazy val ClassTagModule = 
+  //   rootMirror.staticModule("scala.reflect.ClassTag")
+
+  private[this]
+  lazy val classTagByType: Map[Type, Tree] = {
+    import definitions._
+    Map(
+      AnyTpe -> q"scala.reflect.ClassTag.Any",
+      AnyRefTpe -> q"scala.reflect.ClassTag.AnyRef",
+      AnyValTpe -> q"scala.reflect.ClassTag.AnyVal",
+      BooleanTpe -> q"scala.reflect.ClassTag.Boolean",
+      ByteTpe -> q"scala.reflect.ClassTag.Byte",
+      CharTpe -> q"scala.reflect.ClassTag.Char",
+      DoubleTpe -> q"scala.reflect.ClassTag.Double",
+      FloatTpe -> q"scala.reflect.ClassTag.Float",
+      IntTpe -> q"scala.reflect.ClassTag.Int",
+      LongTpe -> q"scala.reflect.ClassTag.Long",
+      NothingTpe -> q"scala.reflect.ClassTag.Nothing",
+      NullTpe -> q"scala.reflect.ClassTag.Null",
+      ObjectTpe -> q"scala.reflect.ClassTag.Object",
+      ShortTpe -> q"scala.reflect.ClassTag.Short",
+      UnitTpe -> q"scala.reflect.ClassTag.Unit")
+  }
+
+  private[streams] def isAbstractType(tpe: Type): Boolean =
+    tpe.typeSymbol.asType.isAbstract
+
+  private[streams] def getClassTagForType(tpe: Type): Option[Tree] =
+    classTagByType.get(tpe).orElse(
+      if (isAbstractType(tpe))
+        None
+      else
+        Some(q"scala.reflect.ClassTag[$tpe](classOf[$tpe])"))
+
+
   private[streams] def newVar(name: TermName, tpe: Type, rhs: Tree = EmptyTree): ValDef = {
     // Note: null.asInstanceOf[T] would work in almost all cases as well.
     val ntpe = normalize(tpe)
