@@ -15,6 +15,9 @@ case class CompilerMessages(
 
 trait StreamComponentsTestBase extends Utils with ConsoleReporters
 {
+  scalaxy.streams.flags.logLevel = LogLevel.Normal
+  scalaxy.streams.flags.quietWarnings = false
+
   val global = scala.reflect.runtime.universe
   val commonOptions = "-usejavacp "
   val optOptions = "-optimise -Yclosure-elim -Yinline "//-Ybackend:GenBCode"
@@ -204,6 +207,8 @@ trait StreamComponentsTestBase extends Utils with ConsoleReporters
         assertArrayEquals(message, expected, actual, 0)
       case (expected: Array[Boolean], actual: Array[Boolean]) =>
         assertArrayEquals(message, expected.map(_.toString: AnyRef), actual.map(_.toString: AnyRef))
+      case (expected: Array[AnyRef], actual: Array[AnyRef]) =>
+        assertArrayEquals(message, expected, actual)
       case (expected, actual) =>
         assertEquals(message, expected, actual)
         assertEquals(message + " (different classes)",
