@@ -32,6 +32,7 @@ scalacOptions ++= Seq(
   "-encoding", "UTF-8",
   "-deprecation", "-feature", "-unchecked",
   "-optimise", "-Yclosure-elim", "-Yinline",
+  "-YclasspathImpl:flat",
   "-Xlog-free-types"
 )
 

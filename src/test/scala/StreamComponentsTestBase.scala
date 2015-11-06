@@ -16,7 +16,7 @@ case class CompilerMessages(
 trait StreamComponentsTestBase extends Utils with ConsoleReporters
 {
   val global = scala.reflect.runtime.universe
-  val commonOptions = "-usejavacp "
+  val commonOptions = "-usejavacp -YclasspathImpl:flat "
   val optOptions = "-optimise -Yclosure-elim -Yinline "//-Ybackend:GenBCode"
   import scala.reflect.runtime.currentMirror
 
