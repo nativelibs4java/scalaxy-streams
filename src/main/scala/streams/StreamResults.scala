@@ -13,8 +13,29 @@ private[streams] trait StreamResults extends TuploidValues {
       afterBody: List[Tree] = Nil,
       ending: List[Tree] = Nil)
   {
+    // val flatten: List[Tree] = {
+    //   val b = collection.mutable.ListBuffer[Tree]()
+    //   for (list <- List(prelude, beforeBody, body, afterBody);
+    //        item <- list) {
+    //     item match {
+    //       case Block(items, v) =>
+    //         b ++= items
+    //         // println("V = " + v + ": " + v.getClass)
+    //         b += v
+    //       case t =>
+    //         b += t
+    //     }
+    //   }
+    //   b ++= ending
+    //   b.result()
+    // }
     def flatten: List[Tree] =
       prelude ++ beforeBody ++ body ++ afterBody ++ ending
+
+    // for ((n, list) <- Map("prelude" -> prelude, "beforeBody" -> beforeBody, "body" -> body, "afterBody" -> afterBody, "ending" -> ending);
+    //      Block(list, v) <- list) {
+    //   println(s"FOUND block item $v in $n")
+    // }
 
     def compose(typed: Tree => Tree) =
       typed(q"..$flatten")
