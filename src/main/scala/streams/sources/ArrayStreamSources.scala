@@ -70,6 +70,10 @@ private[streams] trait ArrayStreamSources
         input.copy(
           vars = outputVars,
           loopInterruptor = interruptor.loopInterruptor,
+          // elementClassTag = {
+          //   val tpe = itemValRef.tpe
+          //   getClassTagForType(tpe).map(tpe -> _)
+          // },
           elementClassTag = None,
           // elementClassTag = Some(itemValRef.tpe -> q"""
           //   scala.reflect.ClassTag[${itemValRef.tpe}](
