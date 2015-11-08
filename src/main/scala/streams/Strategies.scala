@@ -164,18 +164,18 @@ private[streams] trait Strategies
           false
       }
 
-      def isStreamSafe = {
-        // Note: we count the number of closures / ops that have side effects, not the
-        // number of side-effects themselves: we assume that within a closure the 
-        // side effects are still done in the same order, and likewise for preserved
-        // sub-trees that they're still evaluated in the same order within the same
-        // originating op. For instance with mkString(prefix, sep, suffix), prefix,
-        // sep and suffix will still be evaluated in the same order after the rewrite.
-        val unsafeClosureSideEffectCount =
-          stream.closureSideEffectss.count(hasUnsafeEffect)
-        def unsafePreservedTreesSideEffectsCount =
-          stream.preservedSubTreesSideEffectss.count(hasUnsafeEffect)
+      // Note: we count the number of closures / ops that have side effects, not the
+      // number of side-effects themselves: we assume that within a closure the 
+      // side effects are still done in the same order, and likewise for preserved
+      // sub-trees that they're still evaluated in the same order within the same
+      // originating op. For instance with mkString(prefix, sep, suffix), prefix,
+      // sep and suffix will still be evaluated in the same order after the rewrite.
+      val unsafeClosureSideEffectCount =
+        stream.closureSideEffectss.count(hasUnsafeEffect)
+      def unsafePreservedTreesSideEffectsCount =
+        stream.preservedSubTreesSideEffectss.count(hasUnsafeEffect)
 
+      def isStreamSafe = {
         unsafeClosureSideEffectCount <= 1 &&
           (unsafeClosureSideEffectCount + unsafePreservedTreesSideEffectsCount) <= 1 &&
           !couldSkipSideEffects
@@ -205,7 +205,22 @@ private[streams] trait Strategies
         }
       }
 
-      // println(s"tree = ${stream.tree}\n\tstream = ${stream.describe()}\n\tstrategy = $strategy\n\tlambdaCount = ${stream.lambdaCount}\n\tclosureSideEffectss = ${stream.closureSideEffectss}\n\tcouldSkipSideEffects = $couldSkipSideEffects\n\thasMoreThanOneLambdaWithUnsafeSideEffect = $hasMoreThanOneLambdaWithUnsafeSideEffect\n\tisWorthOptimizing = $worthOptimizing")
+      // if (flags.debug) {
+      //   // info(stream.tree.pos, 
+      //   println(s"""
+      //     tree = ${stream.tree}
+      //     stream = ${stream.describe()}
+      //     strategy = $strategy
+      //     lambdaCount = ${stream.lambdaCount}
+      //     closureSideEffectss = ${stream.closureSideEffectss}
+      //     couldSkipSideEffects = $couldSkipSideEffects
+      //     isWorthOptimizing = $worthOptimizing
+      //     isFaster = $isFaster
+      //     unsafeClosureSideEffectCount = $unsafeClosureSideEffectCount
+      //     unsafePreservedTreesSideEffectsCount = $unsafePreservedTreesSideEffectsCount
+      //     isStreamSafe = $isStreamSafe
+      //   """)//, force = true)
+      // }
 
       worthOptimizing
     }
