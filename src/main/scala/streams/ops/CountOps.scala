@@ -10,9 +10,12 @@ private[streams] trait CountOps
   import global._
 
   object SomeCountOp extends StreamOpExtractor {
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.count(${Closure(closure)})" =>
-        (target, CountOp(closure))
+        ExtractedStreamOp(target, CountOp(closure))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

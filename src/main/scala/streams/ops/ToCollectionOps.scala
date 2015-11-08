@@ -11,18 +11,21 @@ private[streams] trait ToCollectionOps
   import global._
 
   object SomeToCollectionOp extends StreamOpExtractor {
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.toIterator" =>
-        (target, ToIteratorOp)
+        ExtractedStreamOp(target, ToIteratorOp)
 
       case q"$target.toList" =>
-        (target, ToListOp)
+        ExtractedStreamOp(target, ToListOp)
 
       case q"$target.toVector" =>
-        (target, ToVectorOp)
+        ExtractedStreamOp(target, ToVectorOp)
 
       case q"$target.toArray[${_}]($classTag)" =>
-        (target, ToArrayOp(classTag))
+        ExtractedStreamOp(target, ToArrayOp(classTag))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

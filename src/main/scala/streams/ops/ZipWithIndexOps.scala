@@ -10,9 +10,12 @@ private[streams] trait ZipWithIndexOps
   import global._
 
   object SomeZipWithIndexOp extends StreamOpExtractor {
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.zipWithIndex[${_}, ${_}]($canBuildFrom)" =>
-        (target, ZipWithIndexOp(canBuildFrom))
+        ExtractedStreamOp(target, ZipWithIndexOp(canBuildFrom))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

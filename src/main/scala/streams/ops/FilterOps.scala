@@ -8,15 +8,18 @@ private[streams] trait FilterOps
   import global._
 
   object SomeFilterOp extends StreamOpExtractor {
-    override def unapply(tree: Tree)= Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.filter(${Closure(closure)})" =>
-        (target, FilterOp(closure))
+        ExtractedStreamOp(target, FilterOp(closure))
 
       case q"$target.filterNot(${Closure(closure)})" =>
-        (target, FilterNotOp(closure))
+        ExtractedStreamOp(target, FilterNotOp(closure))
 
       case q"$target.withFilter(${Closure(closure)})" =>
-        (target, WithFilterOp(closure))
+        ExtractedStreamOp(target, WithFilterOp(closure))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

@@ -10,12 +10,15 @@ private[streams] trait ExistsOps
   import global._
 
   object SomeExistsOp extends StreamOpExtractor {
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.exists(${Closure(closure)})" =>
-        (target, ExistsOp(closure))
+        ExtractedStreamOp(target, ExistsOp(closure))
 
       case q"$target.forall(${Closure(closure)})" =>
-        (target, ForallOp(closure))
+        ExtractedStreamOp(target, ForallOp(closure))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

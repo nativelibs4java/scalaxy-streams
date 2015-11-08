@@ -9,20 +9,23 @@ private[streams] trait OptionOps
   import global._
 
   object SomeOptionOp extends StreamOpExtractor {
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.get" =>
-        (target, OptionGetOrElseOp("get", lambdaCount = 0, q"""
+        ExtractedStreamOp(target, OptionGetOrElseOp("get", lambdaCount = 0, q"""
           throw new NoSuchElementException("None.get")
         """))
 
       case q"$target.orNull[${_}](${_})" =>
-        (target, OptionGetOrElseOp("orNull", lambdaCount = 0, q"null"))
+        ExtractedStreamOp(target, OptionGetOrElseOp("orNull", lambdaCount = 0, q"null"))
 
       case q"$target.getOrElse[${_}]($v)" =>
-        (target, OptionGetOrElseOp("getOrElse", lambdaCount = 1, v))
+        ExtractedStreamOp(target, OptionGetOrElseOp("getOrElse", lambdaCount = 1, v))
 
       case q"$target.orElse[$tpt]($orElseValue)" =>
-        (target, OptionOrElseOp(componentTpe = tpt.tpe, orElseValue))
+        ExtractedStreamOp(target, OptionOrElseOp(componentTpe = tpt.tpe, orElseValue))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

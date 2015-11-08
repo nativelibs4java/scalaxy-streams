@@ -16,12 +16,15 @@ private[streams] trait TakeWhileOps
       else
         None
 
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.takeWhile(${Closure(closure)})" =>
-        (target, TakeWhileOp(closure, sinkOptionForReturnType(tree.tpe)))
+        ExtractedStreamOp(target, TakeWhileOp(closure, sinkOptionForReturnType(tree.tpe)))
 
       case q"$target.dropWhile(${Closure(closure)})" =>
-        (target, DropWhileOp(closure, sinkOptionForReturnType(tree.tpe)))
+        ExtractedStreamOp(target, DropWhileOp(closure, sinkOptionForReturnType(tree.tpe)))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
 

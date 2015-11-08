@@ -1,6 +1,6 @@
 package scalaxy.streams
 
-private[streams] trait OptionalSymbols
+private[streams] trait OptionalSymbols extends Reporters
 {
   val global: scala.reflect.api.Universe
   import global._
@@ -11,7 +11,7 @@ private[streams] trait OptionalSymbols
     } catch {
       case ex: Throwable =>
         if (flags.debug)
-          println(s"Failed to get optional class $name: $ex")
+          warning(NoPosition, s"Failed to get optional class $name: $ex")
         None
     }
   }
@@ -21,7 +21,7 @@ private[streams] trait OptionalSymbols
     } catch {
       case ex: Throwable =>
         if (flags.debug)
-          println(s"Failed to get optional module $name: $ex")
+          warning(NoPosition, s"Failed to get optional module $name: $ex")
         None
     }
   }

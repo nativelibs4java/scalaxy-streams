@@ -16,14 +16,14 @@ private[streams] trait CoerceOps
               case ${CaseTuploidValue(inputValue, Literal(Constant(true)))}
               case _ => false
           }""" if name == param.name && body.tpe =:= typeOf[Boolean] =>
-          Some(target, CoerceOp(inputValue))
+          ExtractedStreamOp(target, CoerceOp(inputValue))
 
         case _ =>
-          None
+          NoExtractedStreamOp
         }
 
       case _ =>
-        None
+        NoExtractedStreamOp
     }
   }
 

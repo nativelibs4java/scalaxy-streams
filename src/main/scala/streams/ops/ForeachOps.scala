@@ -8,9 +8,12 @@ private[streams] trait ForeachOps
   import global._
 
   object SomeForeachOp extends StreamOpExtractor {
-    override def unapply(tree: Tree) = Option(tree) collect {
+    override def unapply(tree: Tree) = tree match {
       case q"$target.foreach[${_}](${Closure(closure)})" =>
-        (target, ForeachOp(closure))
+        ExtractedStreamOp(target, ForeachOp(closure))
+
+      case _ =>
+        NoExtractedStreamOp
     }
   }
   case class ForeachOp(closure: Function)
