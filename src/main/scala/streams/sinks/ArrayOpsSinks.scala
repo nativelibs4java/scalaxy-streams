@@ -37,8 +37,8 @@ private[streams] trait ArrayOpsSinks extends ArrayBuilderSinks {
       import input._
 
       val componentTpe = input.vars.tpe.dealias
-      val Some((_, classTag)) = input.elementClassTag
-      val arrayOutput = ArrayBuilderSink(Some(classTag)).emit(input, outputNeeds, nextOps)
+      val sink = ArrayBuilderSink(input.elementClassTag.map(_._2))
+      val arrayOutput = sink.emit(input, outputNeeds, nextOps)
       
       def getResult(array: Tree) = typed(
         anyValOpsClassNameByType.get(componentTpe) match {
