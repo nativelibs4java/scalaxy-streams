@@ -26,7 +26,7 @@ fork in Test := true
 // in Travis with `sudo: false`.
 // See https://github.com/sbt/sbt/issues/653
 // and https://github.com/travis-ci/travis-ci/issues/3775
-javaOptions += "-Xmx1G"
+javaOptions += "-Xmx4G"
 
 scalacOptions ++= Seq(
   "-encoding", "UTF-8",

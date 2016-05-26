@@ -1,0 +1,4 @@
+-J-Xmx8G
+-J-XX:MaxMetaspaceSize=2G
+-J-XX:MaxPermSize=2G
+-J-XX:+CMSClassUnloadingEnabled
