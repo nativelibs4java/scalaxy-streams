@@ -6,6 +6,8 @@ version := "0.4-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 
+crossScalaVersions := Seq("2.12.0-M3")
+
 resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-compiler" % _)
