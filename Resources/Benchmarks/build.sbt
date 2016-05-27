@@ -14,7 +14,7 @@ autoCompilerPlugins := true
 
 libraryDependencies += "com.nativelibs4java" %% "scalaxy-streams" % "0.4-SNAPSHOT"
 
-scalacOptions ++= Seq("-optimise", "-Yclosure-elim", "-Yinline")
+scalacOptions ++= Seq("-optimise")//, "-Yclosure-elim", "-Yinline")
 
 // scalacOptions += "-Xprint:cleanup"
 
