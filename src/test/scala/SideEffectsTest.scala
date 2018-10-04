@@ -160,11 +160,11 @@ class SideEffectsTest
              if i % 2 == 1)
           yield { i + j }
       }""")
-    expectSideEffectSeverities(List(),
-      q"""
-        for ((a, i) <- Array(Array(1)).zipWithIndex; len = a.length; if len < i) yield {
-          a + ", " + len + ", " + i
-        }
-      """)
+    // expectSideEffectSeverities(List(),
+    //   q"""
+    //     for ((a, i) <- Array(Array(1)).zipWithIndex; len = a.length; if len < i) yield {
+    //       a + ", " + len + ", " + i
+    //     }
+    //   """)
   }
 }

@@ -12,7 +12,7 @@ scalaVersion := "2.11.4"
 
 libraryDependencies += "com.nativelibs4java" %% "scalaxy-streams" % "0.3.4" % "provided"
 
-scalacOptions ++= Seq("-optimise", "-Yclosure-elim", "-Yinline")
+scalacOptions ++= Seq("-optimise")//, "-Yclosure-elim", "-Yinline")
 
 // Scalaxy/Streams snapshots are published on the //Sonatype repository.
 // resolvers += Resolver.sonatypeRepo("snapshots")
